@@ -1,0 +1,19 @@
+.switchbar {
+    height: 40px;
+    width: 100%;
+    /* background-color: pink; */
+}
+
+.switch-label {
+    padding-left: 20px;
+    text-align: left;
+    font-size: 20px;
+    font-weight: bold;
+    color: rgb(0, 0, 0);
+    display: inline-flex;
+    margin-top: 4px;
+}
+
+.switch{
+    margin-top: -6px;
+}

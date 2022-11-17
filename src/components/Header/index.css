@@ -1,0 +1,10 @@
+.header {
+    width: 100%;
+    height: 80px;
+    text-align: center;
+    color: rgb(70, 70, 162);
+    font-weight: bold;
+    font-size: 55px;
+    vertical-align: middle;
+    /*  background-color: rgb(241, 231, 233); */
+}

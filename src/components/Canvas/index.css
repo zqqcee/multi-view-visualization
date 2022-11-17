@@ -1,0 +1,20 @@
+.container {
+    /* background-color: pink; */
+    /* flex:inherit; */
+    /* margin-left: 222px; */
+    /* margin-right: 20px; */
+    /* margin-top: 20px; */
+    width: auto;
+    height: 1000px;
+    overflow: scroll;
+}
+
+.canvasBox {
+    margin-left: 222px;
+    margin-right: 20px;
+    margin-top: 20px;
+    
+}
+.infoLabel{
+    font-size: 20px;
+}

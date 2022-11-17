@@ -1,0 +1,40 @@
+.selection {
+    height: auto;
+    width: 200px;
+    float: left;
+    /* background-color: pink; */
+}
+
+
+
+.areaSelection {
+    margin-top: 20px;
+    height: 250px;
+    width: auto;
+    overflow-y: scroll;
+    border: 1px solid black;
+}
+
+.roleSelection {
+    margin-top: 0px;
+    height: 200px;
+    width: auto;
+    overflow-y: scroll;
+    border: 1px solid black;
+    border-top: 0px;
+}
+
+.linkSelection {
+    margin-top: 0px;
+    height: 200px;
+    width: auto;
+    overflow-y: scroll;
+    border: 1px solid black;
+    border-top: 0px;
+}
+
+.spanLabel {
+    margin-left: 5px;
+    font-size: 15px;
+    color: rgb(140, 126, 152);
+}
