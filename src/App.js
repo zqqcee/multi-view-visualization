@@ -3,6 +3,7 @@ import Header from './components/Header'
 import UserSelection from './components/UserSelection'
 import SwitchBar from './components/SwitchBar'
 import Canvas from './components/Canvas'
+import DataInfo from './components/DataInfo'
 
 export default function App() {
 
@@ -12,6 +13,7 @@ export default function App() {
             <Header />
             <SwitchBar />
             <UserSelection />
+            <DataInfo />
             <Canvas />
 
         </div>

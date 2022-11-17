@@ -1,0 +1,14 @@
+.datainfo {
+    position: absolute;
+    /* background-color: pink; */
+    width: auto;
+    margin-left: 225px;
+    margin-top: 25px;
+    font-size: 20px;
+}
+
+.highlighttext{
+    color: brown;
+    font-weight: bold;
+    font-size: 25px;
+}

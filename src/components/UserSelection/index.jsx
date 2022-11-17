@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Tree } from 'antd';
 import "./index.css"
 import { getAreaSelection, getRoleSelection, getLinkSelection } from '../../utils/getOptions';
@@ -103,6 +103,12 @@ export default function UserSelection() {
     /**Link Tree  Component default setting  */
     const [linkCheckedKeys, setLinkCheckedKeys] = useState(); //选中的角色
 
+    //FIXME: 重新选择数据集后，所有的选项都应该清空
+    useEffect(() => {
+        setAreaCheckedKeys(null)
+        setRoleCheckedKeys(null)
+        setLinkCheckedKeys(null)
+    }, [dataName])
 
     //areaSelection
     const areaOnExpand = (expandAZ) => {

@@ -1,12 +1,13 @@
 
 import React, { useEffect, useLayoutEffect } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import "./index.css"
 import * as d3 from "d3"
 import { FOCUS, HIGHLIGHT } from '../../redux/constant'
 import { SETTING } from './constant'
 import { dataSets } from '../../utils/getData'
 import { handleData } from '../../utils/handleData'
+import { changeDataInfo } from "../../redux/dataInfoSlice"
 
 /** global storage */
 let transformObj = { k: 1, x: 1, y: 0 };
@@ -21,30 +22,32 @@ let ifFirstHighlight = true // 是否是第一次进入高亮
 //BUG :这个mode为什么不能定义在组件内部
 let mode
 
-//TODO: 节点拖拽
-//TODO: 自动缩放
+//TODO: 节点拖拽(已尝试)
+//TODO: 自动缩放（已尝试）
 //TODO: bubbleSet
-//TODO: 过滤节点的数量修改
-//TODO: 
 export default function Canvas() {
     const dataName = useSelector(state => state.option.dataName)
     const datasource = dataSets[dataName]
     const data = handleData(datasource)
     mode = useSelector(state => state.option.mode)
+
     const area = useSelector(state => state.selection.area)
     const role = useSelector(state => state.selection.role)
     const link = useSelector(state => state.selection.link)
 
     let nodes = data.nodes
     let links = data.links
+    const dispatch = useDispatch()
 
     useLayoutEffect(() => {
         initCanvas()
     }, [dataName])
 
+
+    //FIXME:更换数据集后，高亮的节点清空
     useEffect(() => {
-        // transformObj = { k: 1, x: 1, y: 0 };
-        initCanvas()
+        needToHighLightNodeIp = new Set() // 记录全局的需要高亮的节点
+        needToHighLightLink = []
     }, [dataName])
 
     //BUG:问一下hook合理的写法
@@ -78,6 +81,7 @@ export default function Canvas() {
             .attr('class', 'canvasContainer')
             .attr('height', height)
             .attr('width', width)
+
         canvasContainer.call(
             d3.zoom()
                 .scaleExtent([1 / 100, 930])
@@ -87,10 +91,49 @@ export default function Canvas() {
                     renderRefresh();
                 })
         )
+        //FIXME:取消双击放缩事件
+        .on('dblclick.zoom',null)
+
+        // const findOperateNode = (x, y) => {
+        //     const radius = SETTING.size.nodeRadius
+        //     const rSq = radius * radius;
+        //     const node = data.nodes.find((d) => Math.pow((x - d.x), 2) + Math.pow((y - d.y), 2) < rSq);
+        //     return node;
+        // }
+        // const dragSubject = (event) => {
+        //     console.log(transformObj);
+        //     const x = transformObj.invertX(event.x)
+        //     const y = transformObj.invertY(event.y)
+        //     const node = findOperateNode(x, y)
+        //     if (node) {
+        //         node.x = transformObj.applyX(node.x);
+        //         node.y = transformObj.applyY(node.y);
+        //     }
+        //     console.log(node);
+        //     return node
+        // }
+        // canvasContainer.call(d3
+        //     .drag()
+        //     .subject(e => dragSubject(e))
+        //     .on('start', (event) => {
+        //         console.log(111);
+        //         if (!event.active)
+        //             simulation.alphaTarget(0.3).restart();
+        //         event.subject.fx = transformObj.invertX(event.x);
+        //         event.subject.fy = transformObj.invertY(event.y);
+        //     })
+        //     .on('drag', (event) => {
+        //         event.subject.fx = transformObj.invertX(event.x);
+        //         event.subject.fy = transformObj.invertY(event.y);
+        //     })
+        //     .on('end', (event) => {
+        //         if (!event.active)
+        //             this.simulation.alphaTarget(0);
+        //         renderRefresh()
+        //     })
+        // )
 
 
-
-        //TODO: focus加拖拽
         const canvas = canvasContainer.append('canvas')
             .attr('id', 'canvasNode')
             .attr('class', 'canvasNode')
@@ -108,13 +151,12 @@ export default function Canvas() {
             .force("link", d3.forceLink(links).id(d => {
                 return d.mgmt_ip
             }).strength(0.5).distance(10))
-            .on("tick", () => { if (simulation.alpha() < 0.1) simulation.stop(); renderRefresh() })
+            .on("tick", () => { if (simulation.alpha() < 0.01) simulation.stop(); renderRefresh() })
 
 
 
 
-        //FIXME: 在高亮模式下保证刷新不用重绘
-        //FIXME: 因为拖拽只用了这一个刷新函数，所以要在这里判断模式，采用不同的绘制方式（高亮/过滤）
+        //FIXME: 因为zoom只用了这一个刷新函数，所以要在这里判断模式，采用不同的绘制方式（高亮/过滤）
         const drawNodes = () => {
             if (mode === HIGHLIGHT) {
                 if (needToHighLightNodeIp.size === 0) {
@@ -155,6 +197,7 @@ export default function Canvas() {
                 })
             }
         }
+
 
         const drawLinks = () => {
             if (mode === HIGHLIGHT) {
@@ -232,7 +275,6 @@ export default function Canvas() {
         }
 
         const renderRefresh = () => {
-
             ctx.save();
             ctx.clearRect(0, 0, width, height);
             ctx.translate(transformObj.x, transformObj.y);
@@ -241,8 +283,6 @@ export default function Canvas() {
             drawLinks();
             ctx.restore();
         }
-
-
     }
 
     const initCanvasByData = (nodes, links) => {
@@ -254,9 +294,10 @@ export default function Canvas() {
 
         simulation.nodes(nodes)
             .force("link", d3.forceLink(links).id(d => d.mgmt_ip).strength(0.5).distance(10))
+            .force("charge", d3.forceManyBody().strength(-90))
             .on("tick", () => renderRefresh())
 
-        simulation.alpha(0.3).restart()
+        simulation.alphaTarget(0.1).restart()
 
         const drawNodes = () => {
             nodes.forEach(node => {
@@ -268,8 +309,23 @@ export default function Canvas() {
             })
         }
 
+        //FIXME: 添加高亮节点，高亮连边数量统计功能
         if (mode === FOCUS) {
-            console.log("on focus mode");
+            let highlightNodeNum;
+            let highlightLinkNum;
+
+            if (nodes.length === data.nodes.length) {
+                highlightNodeNum = 0;
+            } else {
+                highlightNodeNum = nodes.length
+            }
+
+            if (links.length === data.links.length) {
+                highlightLinkNum = 0
+            } else {
+                highlightLinkNum = links.length
+            }
+            dispatch(changeDataInfo({ highlightNodeNum, highlightLinkNum }))
         }
 
         const drawLinks = () => {
@@ -306,29 +362,6 @@ export default function Canvas() {
             drawNodes();
             ctx.restore();
         }
-
-
-
-        //TODO: focus模式下拖拽
-        const findOperateNode = (x, y) => {
-            const radius = SETTING.size.nodeRadius
-            const rSq = radius * radius;
-            const node = data.nodes.find((d) => Math.pow((x - d.x), 2) + Math.pow((y - d.y), 2) < rSq);
-            return node;
-        }
-
-
-        const dragSubject = (event) => {
-            const x = transformObj.invertX(event.x)
-            const y = transformObj.invertY(event.y)
-            const node = findOperateNode(x, y)
-            if (node) {
-                node.x = this.transformObj.applyX(node.x);
-                node.y = this.transformObj.applyY(node.y);
-            }
-            return node
-        }
-
 
     }
 
@@ -430,6 +463,22 @@ export default function Canvas() {
         }
 
         const renderRefresh = () => {
+            //FIXME: 添加高亮节点，高亮连边数量统计功能
+            let highlightNodeNum;
+            let highlightLinkNum;
+            if (needToHighLightNodeIp.size === data.nodes.length) {
+                highlightNodeNum = 0;
+            } else {
+                highlightNodeNum = needToHighLightNodeIp.size
+            }
+
+            if (needToHighLightLink.length === data.links.length) {
+                highlightLinkNum = 0
+            } else {
+                highlightLinkNum = needToHighLightLink.length
+            }
+            dispatch(changeDataInfo({ highlightNodeNum, highlightLinkNum }))
+
             ctx.save();
             ctx.clearRect(0, 0, width, height);
             ctx.translate(transformObj.x, transformObj.y);
@@ -442,7 +491,7 @@ export default function Canvas() {
 
         //如果三个条件都是空，重绘
         if (!areaOption.length && !roleOption.length && !linkOption.length) {
-            //三个都没选，初始渲染
+
             renderRefresh()
             return;
         }
@@ -513,7 +562,6 @@ export default function Canvas() {
      * @param linkOption : 用户选择连边类型的数组
      */
     const focusmode = (areaOption, roleOption, linkOption) => {
-
         //重制
         needToHighLightNodeIp = new Set();
         needToHighLightLink = []
@@ -603,15 +651,6 @@ export default function Canvas() {
 
     return (
         <div className='canvasBox'>
-            <p className='infoLabel'>
-                数据集节点数量:{datasource.nodes.length};
-                数据集连边数量:{datasource.links.length};
-                告警节点数量:{datasource.nodes.filter(node => node.is_alarming).length};
-                告警连边数量:{datasource.links.filter(link => link.is_alarming).length};
-                {
-                    //TODO： 加上过滤节点的标识
-                }
-            </p>
             <div id="container" className='container'>
             </div>
         </div>
