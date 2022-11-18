@@ -96,3 +96,33 @@ export default function generate() {
 - 注意！！：频繁切换模式可能导致更新不及时，而出现画布绘制不正确的情况。刷新即可
 
 > FIXME:拖拽功能，过滤节点的数量计算功能，层次化布局正在开发中
+
+
+
+## 更新日志
+
+```FIXME(2022-11-18)```：新增显示告警功能
+
+- 构造好告警数据集后，即可在数据集中看到有多少告警的数量。
+
+![image-20221118165005427](https://raw.githubusercontent.com/zqqcee/img_repo/main/img/202211181650159.png)
+
+- 是否展示告警数据是一个配置项，在```src/components/Canvas/constants.js```中，修改
+
+  ```json
+      alarming: {
+          node: {
+              fill: 'red',
+              radius: 15,
+              flag: false,//全局开关 ,如果不想看告警，只想看结构可以修改为false
+          },
+          link: {
+              stroke: 'red',
+              strokeWidth: 4,
+              flag: false,//全局开关，如果不想看告警，只想看结构可以修改为false
+          }
+      }
+  ```
+
+  
+

@@ -1,7 +1,7 @@
 export const SETTING = {
     size: {
         nodeRadius: 5,
-        highlightNodeRadius: 10,
+        highlightNodeRadius: 6,
         linkStrokeWidth: .3,
         highlightLinkStrokeWidth: 1
     },
@@ -21,5 +21,20 @@ export const SETTING = {
         'server': "#9467bd80",
         'virtual': "#9467bd80",
         'default': "#bcb8b180"
+    },
+
+
+    alarming: {
+        node: {
+            fill: 'red',
+            radius: 15,
+            flag: false,//全局开关
+        },
+        link: {
+            stroke: 'red',
+            strokeWidth: 4,
+            flag: false,//全局开关
+        }
     }
+
 }

@@ -1,4 +1,3 @@
-
 import React, { useEffect, useLayoutEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import "./index.css"
@@ -25,6 +24,10 @@ let mode
 //TODO: 节点拖拽(已尝试)
 //TODO: 自动缩放（已尝试）
 //TODO: bubbleSet
+//TODO: 更加详细的数据说明（做一个小框）
+//TODO: 节点搜索功能（新页面）
+//TODO: 图例
+
 export default function Canvas() {
     const dataName = useSelector(state => state.option.dataName)
     const datasource = dataSets[dataName]
@@ -91,8 +94,8 @@ export default function Canvas() {
                     renderRefresh();
                 })
         )
-        //FIXME:取消双击放缩事件
-        .on('dblclick.zoom',null)
+            //FIXME:取消双击放缩事件
+            .on('dblclick.zoom', null)
 
         // const findOperateNode = (x, y) => {
         //     const radius = SETTING.size.nodeRadius
@@ -141,10 +144,11 @@ export default function Canvas() {
             .attr('width', width)
         const ctx = canvas.node().getContext('2d')
 
+        //TODO 调整碰撞力
         simulation = d3.forceSimulation(nodes)
             .force("charge", d3.forceManyBody().strength(-90))
             .force("center", d3.forceCenter(width / 2, height / 2))
-            .force("collide", d3.forceCollide().radius(4).strength(0.8))
+            .force("collide", d3.forceCollide().radius(5).strength(0.8))
             //设定forceX与forceY使得它们更加聚拢在中间位置
             .force("x", d3.forceX(width / 2).strength(0.15))
             .force("y", d3.forceY(height / 2).strength(0.15))
@@ -154,17 +158,21 @@ export default function Canvas() {
             .on("tick", () => { if (simulation.alpha() < 0.01) simulation.stop(); renderRefresh() })
 
 
-
-
         //FIXME: 因为zoom只用了这一个刷新函数，所以要在这里判断模式，采用不同的绘制方式（高亮/过滤）
+        //FIXME: 添加节点告警的绘制，没有被用户选中的节点，不会显示告警
         const drawNodes = () => {
             if (mode === HIGHLIGHT) {
                 if (needToHighLightNodeIp.size === 0) {
                     nodes.forEach(node => {
                         ctx.beginPath();
                         ctx.moveTo(node.x + SETTING.size.nodeRadius, node.y);
-                        ctx.arc(node.x, node.y, SETTING.size.nodeRadius, 0, 2 * Math.PI);
-                        ctx.fillStyle = SETTING.fill[node.role.toLowerCase()]
+                        if (SETTING.alarming.node.flag && node.is_alarming) {
+                            ctx.arc(node.x, node.y, SETTING.alarming.node.radius, 0, 2 * Math.PI);
+                            ctx.fillStyle = SETTING.alarming.node.fill
+                        } else {
+                            ctx.arc(node.x, node.y, SETTING.size.nodeRadius, 0, 2 * Math.PI);
+                            ctx.fillStyle = SETTING.fill[node.role.toLowerCase()]
+                        }
                         ctx.fill();
                     })
                 } else {
@@ -180,8 +188,13 @@ export default function Canvas() {
                     needToHightLightNode.forEach(node => {
                         ctx.beginPath();
                         ctx.moveTo(node.x + SETTING.size.nodeRadius, node.y);
-                        ctx.arc(node.x, node.y, SETTING.size.nodeRadius * 2, 0, 2 * Math.PI);
-                        ctx.fillStyle = SETTING.fill[node.role.toLowerCase()]
+                        if (SETTING.alarming.node.flag && node.is_alarming) {
+                            ctx.arc(node.x, node.y, SETTING.alarming.node.radius, 0, 2 * Math.PI);
+                            ctx.fillStyle = SETTING.alarming.node.fill
+                        } else {
+                            ctx.arc(node.x, node.y, SETTING.size.highlightNodeRadius, 0, 2 * Math.PI);
+                            ctx.fillStyle = SETTING.fill[node.role.toLowerCase()]
+                        }
                         ctx.fill();
                     })
                 }
@@ -191,62 +204,97 @@ export default function Canvas() {
                 nodes.filter(node => needToHighLightNodeIp.has(node.mgmt_ip)).forEach(node => {
                     ctx.beginPath();
                     ctx.moveTo(node.x + SETTING.size.nodeRadius, node.y);
-                    ctx.arc(node.x, node.y, SETTING.size.nodeRadius, 0, 2 * Math.PI);
-                    ctx.fillStyle = SETTING.fill[node.role.toLowerCase()]
+
+
+                    if (SETTING.alarming.node.flag && node.is_alarming) {
+                        ctx.arc(node.x, node.y, SETTING.alarming.node.radius, 0, 2 * Math.PI);
+                        ctx.fillStyle = SETTING.alarming.node.fill
+                    } else {
+                        ctx.arc(node.x, node.y, SETTING.size.nodeRadius, 0, 2 * Math.PI);
+                        ctx.fillStyle = SETTING.fill[node.role.toLowerCase()]
+                    }
                     ctx.fill();
                 })
             }
         }
 
-
+        //TODO: 添加连边告警的绘制
         const drawLinks = () => {
             if (mode === HIGHLIGHT) {
-                links.filter(link => needToHighLightLink.indexOf(link) < 0).forEach(link => {
-                    ctx.beginPath();
-                    const distance = Math.hypot(link.source.x - link.target.x, link.source.y - link.target.y);
-                    const newSourceNode = {
-                        x: ((distance - SETTING.size.nodeRadius) / distance) * (link.source.x - link.target.x) + link.target.x,
+                if (needToHighLightLink.length === 0) {
+                    links.forEach(link => {
+                        ctx.beginPath();
+                        const distance = Math.hypot(link.source.x - link.target.x, link.source.y - link.target.y);
+                        const newSourceNode = {
+                            x: ((distance - SETTING.size.nodeRadius) / distance) * (link.source.x - link.target.x) + link.target.x,
 
-                        y: ((distance - SETTING.size.nodeRadius) / distance) * (link.source.y - link.target.y) + link.target.y,
-                    }
-                    const newTargetNode = {
-                        x: ((SETTING.size.nodeRadius + 0) / distance) *
-                            (link.source.x - link.target.x) + link.target.x,
-                        y: ((SETTING.size.nodeRadius + 0) / distance) *
-                            (link.source.y - link.target.y) + link.target.y,
-                    }
-                    ctx.moveTo(newSourceNode.x, newSourceNode.y);
-                    ctx.lineTo(newTargetNode.x, newTargetNode.y);
-                    ctx.strokeStyle = SETTING.fill.stroke;
-                    ctx.lineWidth = SETTING.size.linkStrokeWidth;
-                    ctx.stroke();
-                })
-                needToHighLightLink.forEach(link => {
-                    ctx.beginPath();
-                    const distance = Math.hypot(link.source.x - link.target.x, link.source.y - link.target.y);
-                    const newSourceNode = {
-                        x: ((distance - SETTING.size.nodeRadius) / distance) * (link.source.x - link.target.x) + link.target.x,
+                            y: ((distance - SETTING.size.nodeRadius) / distance) * (link.source.y - link.target.y) + link.target.y,
+                        }
+                        const newTargetNode = {
+                            x: ((SETTING.size.nodeRadius + 0) / distance) *
+                                (link.source.x - link.target.x) + link.target.x,
+                            y: ((SETTING.size.nodeRadius + 0) / distance) *
+                                (link.source.y - link.target.y) + link.target.y,
+                        }
+                        ctx.moveTo(newSourceNode.x, newSourceNode.y);
+                        ctx.lineTo(newTargetNode.x, newTargetNode.y);
+                        if (SETTING.alarming.link.flag && link.is_alarming) {
+                            ctx.strokeStyle = SETTING.alarming.link.stroke
+                            ctx.lineWidth = SETTING.alarming.link.strokeWidth;
+                        } else {
+                            ctx.strokeStyle = SETTING.fill.stroke;
+                            ctx.lineWidth = SETTING.size.linkStrokeWidth;
+                        }
+                        ctx.stroke();
+                    })
+                } else {
+                    links.filter(link => needToHighLightLink.indexOf(link) < 0).forEach(link => {
+                        ctx.beginPath();
+                        const distance = Math.hypot(link.source.x - link.target.x, link.source.y - link.target.y);
+                        const newSourceNode = {
+                            x: ((distance - SETTING.size.nodeRadius) / distance) * (link.source.x - link.target.x) + link.target.x,
 
-                        y: ((distance - SETTING.size.nodeRadius) / distance) * (link.source.y - link.target.y) + link.target.y,
-                    }
-                    const newTargetNode = {
-                        x: ((SETTING.size.nodeRadius + 0) / distance) *
-                            (link.source.x - link.target.x) + link.target.x,
-                        y: ((SETTING.size.nodeRadius + 0) / distance) *
-                            (link.source.y - link.target.y) + link.target.y,
-                    }
-
-                    if (needToHighLightLink.indexOf(link) >= 0) {
-                        ctx.strokeStyle = SETTING.fill.highlightLinkStroke;
-                        ctx.lineWidth = SETTING.size.highlightLinkStrokeWidth;
-                    } else {
+                            y: ((distance - SETTING.size.nodeRadius) / distance) * (link.source.y - link.target.y) + link.target.y,
+                        }
+                        const newTargetNode = {
+                            x: ((SETTING.size.nodeRadius + 0) / distance) *
+                                (link.source.x - link.target.x) + link.target.x,
+                            y: ((SETTING.size.nodeRadius + 0) / distance) *
+                                (link.source.y - link.target.y) + link.target.y,
+                        }
                         ctx.strokeStyle = SETTING.fill.stroke;
                         ctx.lineWidth = SETTING.size.linkStrokeWidth;
-                    }
-                    ctx.moveTo(newSourceNode.x, newSourceNode.y);
-                    ctx.lineTo(newTargetNode.x, newTargetNode.y);
-                    ctx.stroke();
-                })
+                        ctx.moveTo(newSourceNode.x, newSourceNode.y);
+                        ctx.lineTo(newTargetNode.x, newTargetNode.y);
+                        ctx.stroke();
+                    })
+                    needToHighLightLink.forEach(link => {
+                        ctx.beginPath();
+                        const distance = Math.hypot(link.source.x - link.target.x, link.source.y - link.target.y);
+                        const newSourceNode = {
+                            x: ((distance - SETTING.size.nodeRadius) / distance) * (link.source.x - link.target.x) + link.target.x,
+
+                            y: ((distance - SETTING.size.nodeRadius) / distance) * (link.source.y - link.target.y) + link.target.y,
+                        }
+                        const newTargetNode = {
+                            x: ((SETTING.size.nodeRadius + 0) / distance) *
+                                (link.source.x - link.target.x) + link.target.x,
+                            y: ((SETTING.size.nodeRadius + 0) / distance) *
+                                (link.source.y - link.target.y) + link.target.y,
+                        }
+
+                        if (SETTING.alarming.link.flag && link.is_alarming) {
+                            ctx.strokeStyle = SETTING.alarming.link.stroke
+                            ctx.lineWidth = SETTING.alarming.link.strokeWidth;
+                        } else {
+                            ctx.strokeStyle = SETTING.fill.highlightLinkStroke;
+                            ctx.lineWidth = SETTING.size.highlightLinkStrokeWidth;
+                        }
+                        ctx.moveTo(newSourceNode.x, newSourceNode.y);
+                        ctx.lineTo(newTargetNode.x, newTargetNode.y);
+                        ctx.stroke();
+                    })
+                }
             } else {
                 needToHighLightLink.forEach(link => {
                     ctx.beginPath();
@@ -265,9 +313,13 @@ export default function Canvas() {
                     }
                     ctx.moveTo(newSourceNode.x, newSourceNode.y);
                     ctx.lineTo(newTargetNode.x, newTargetNode.y);
-
-                    ctx.strokeStyle = SETTING.fill.stroke;
-                    ctx.lineWidth = SETTING.size.linkStrokeWidth;
+                    if (SETTING.alarming.link.flag && link.is_alarming) {
+                        ctx.strokeStyle = SETTING.alarming.link.stroke
+                        ctx.lineWidth = SETTING.alarming.link.strokeWidth;
+                    } else {
+                        ctx.strokeStyle = SETTING.fill.stroke;
+                        ctx.lineWidth = SETTING.size.linkStrokeWidth;
+                    }
                     ctx.stroke();
                 })
             }
@@ -303,8 +355,13 @@ export default function Canvas() {
             nodes.forEach(node => {
                 ctx.beginPath();
                 ctx.moveTo(node.x + SETTING.size.nodeRadius, node.y);
-                ctx.arc(node.x, node.y, SETTING.size.nodeRadius, 0, 2 * Math.PI);
-                ctx.fillStyle = SETTING.fill[node.role.toLowerCase()]
+                if (SETTING.alarming.node.flag && node.is_alarming) {
+                    ctx.arc(node.x, node.y, SETTING.alarming.node.radius, 0, 2 * Math.PI);
+                    ctx.fillStyle = SETTING.alarming.node.fill
+                } else {
+                    ctx.arc(node.x, node.y, SETTING.size.nodeRadius, 0, 2 * Math.PI);
+                    ctx.fillStyle = SETTING.fill[node.role.toLowerCase()]
+                }
                 ctx.fill();
             })
         }
@@ -334,7 +391,6 @@ export default function Canvas() {
                 const distance = Math.hypot(link.source.x - link.target.x, link.source.y - link.target.y);
                 const newSourceNode = {
                     x: ((distance - SETTING.size.nodeRadius) / distance) * (link.source.x - link.target.x) + link.target.x,
-
                     y: ((distance - SETTING.size.nodeRadius) / distance) * (link.source.y - link.target.y) + link.target.y,
                 }
 
@@ -347,8 +403,13 @@ export default function Canvas() {
                 ctx.moveTo(newSourceNode.x, newSourceNode.y);
                 ctx.lineTo(newTargetNode.x, newTargetNode.y);
 
-                ctx.strokeStyle = SETTING.fill.stroke;
-                ctx.lineWidth = SETTING.size.linkStrokeWidth;
+                if (SETTING.alarming.link.flag && link.is_alarming) {
+                    ctx.strokeStyle = SETTING.alarming.link.stroke
+                    ctx.lineWidth = SETTING.alarming.link.strokeWidth;
+                } else {
+                    ctx.strokeStyle = SETTING.fill.stroke;
+                    ctx.lineWidth = SETTING.size.linkStrokeWidth;
+                }
                 ctx.stroke();
             })
         }
@@ -389,8 +450,13 @@ export default function Canvas() {
                 nodes.forEach(node => {
                     ctx.beginPath();
                     ctx.moveTo(node.x + SETTING.size.nodeRadius, node.y);
-                    ctx.arc(node.x, node.y, SETTING.size.nodeRadius, 0, 2 * Math.PI);
-                    ctx.fillStyle = SETTING.fill[node.role.toLowerCase()]
+                    if (SETTING.alarming.node.flag && node.is_alarming) {
+                        ctx.arc(node.x, node.y, SETTING.alarming.node.radius, 0, 2 * Math.PI);
+                        ctx.fillStyle = SETTING.alarming.node.fill
+                    } else {
+                        ctx.arc(node.x, node.y, SETTING.size.highlightNodeRadius, 0, 2 * Math.PI);
+                        ctx.fillStyle = SETTING.fill[node.role.toLowerCase()]
+                    }
                     ctx.fill();
                 })
             } else {
@@ -406,60 +472,93 @@ export default function Canvas() {
                 needToHightLightNode.forEach(node => {
                     ctx.beginPath();
                     ctx.moveTo(node.x + SETTING.size.nodeRadius, node.y);
-                    ctx.arc(node.x, node.y, SETTING.size.nodeRadius * 2, 0, 2 * Math.PI);
-                    ctx.fillStyle = SETTING.fill[node.role.toLowerCase()]
+                    if (SETTING.alarming.node.flag && node.is_alarming) {
+                        ctx.arc(node.x, node.y, SETTING.alarming.node.radius, 0, 2 * Math.PI);
+                        ctx.fillStyle = SETTING.alarming.node.fill
+                    } else {
+                        ctx.arc(node.x, node.y, SETTING.size.highlightNodeRadius, 0, 2 * Math.PI);
+                        ctx.fillStyle = SETTING.fill[node.role.toLowerCase()]
+                    }
                     ctx.fill();
                 })
             }
         }
 
         const drawLinks = () => {
-            links.filter(link => needToHighLightLink.indexOf(link) < 0).forEach(link => {
-                ctx.beginPath();
-                const distance = Math.hypot(link.source.x - link.target.x, link.source.y - link.target.y);
-                const newSourceNode = {
-                    x: ((distance - SETTING.size.nodeRadius) / distance) * (link.source.x - link.target.x) + link.target.x,
+            if (needToHighLightLink.length === 0) {
+                links.forEach(link => {
+                    ctx.beginPath();
+                    const distance = Math.hypot(link.source.x - link.target.x, link.source.y - link.target.y);
+                    const newSourceNode = {
+                        x: ((distance - SETTING.size.nodeRadius) / distance) * (link.source.x - link.target.x) + link.target.x,
 
-                    y: ((distance - SETTING.size.nodeRadius) / distance) * (link.source.y - link.target.y) + link.target.y,
-                }
-                const newTargetNode = {
-                    x: ((SETTING.size.nodeRadius + 0) / distance) *
-                        (link.source.x - link.target.x) + link.target.x,
-                    y: ((SETTING.size.nodeRadius + 0) / distance) *
-                        (link.source.y - link.target.y) + link.target.y,
-                }
-                ctx.moveTo(newSourceNode.x, newSourceNode.y);
-                ctx.lineTo(newTargetNode.x, newTargetNode.y);
-                ctx.strokeStyle = SETTING.fill.stroke;
-                ctx.lineWidth = SETTING.size.linkStrokeWidth;
-                ctx.stroke();
-            })
-            needToHighLightLink.forEach(link => {
-                ctx.beginPath();
-                const distance = Math.hypot(link.source.x - link.target.x, link.source.y - link.target.y);
-                const newSourceNode = {
-                    x: ((distance - SETTING.size.nodeRadius) / distance) * (link.source.x - link.target.x) + link.target.x,
+                        y: ((distance - SETTING.size.nodeRadius) / distance) * (link.source.y - link.target.y) + link.target.y,
+                    }
+                    const newTargetNode = {
+                        x: ((SETTING.size.nodeRadius + 0) / distance) *
+                            (link.source.x - link.target.x) + link.target.x,
+                        y: ((SETTING.size.nodeRadius + 0) / distance) *
+                            (link.source.y - link.target.y) + link.target.y,
+                    }
+                    ctx.moveTo(newSourceNode.x, newSourceNode.y);
+                    ctx.lineTo(newTargetNode.x, newTargetNode.y);
+                    if (SETTING.alarming.link.flag && link.is_alarming) {
+                        ctx.strokeStyle = SETTING.alarming.link.stroke
+                        ctx.lineWidth = SETTING.alarming.link.strokeWidth;
+                    } else {
+                        ctx.strokeStyle = SETTING.fill.stroke;
+                        ctx.lineWidth = SETTING.size.linkStrokeWidth;
+                    }
+                    ctx.stroke();
+                })
+            } else {
+                links.filter(link => needToHighLightLink.indexOf(link) < 0).forEach(link => {
+                    ctx.beginPath();
+                    const distance = Math.hypot(link.source.x - link.target.x, link.source.y - link.target.y);
+                    const newSourceNode = {
+                        x: ((distance - SETTING.size.nodeRadius) / distance) * (link.source.x - link.target.x) + link.target.x,
 
-                    y: ((distance - SETTING.size.nodeRadius) / distance) * (link.source.y - link.target.y) + link.target.y,
-                }
-                const newTargetNode = {
-                    x: ((SETTING.size.nodeRadius + 0) / distance) *
-                        (link.source.x - link.target.x) + link.target.x,
-                    y: ((SETTING.size.nodeRadius + 0) / distance) *
-                        (link.source.y - link.target.y) + link.target.y,
-                }
-
-                if (needToHighLightLink.indexOf(link) >= 0) {
-                    ctx.strokeStyle = SETTING.fill.highlightLinkStroke;
-                    ctx.lineWidth = SETTING.size.highlightLinkStrokeWidth;
-                } else {
+                        y: ((distance - SETTING.size.nodeRadius) / distance) * (link.source.y - link.target.y) + link.target.y,
+                    }
+                    const newTargetNode = {
+                        x: ((SETTING.size.nodeRadius + 0) / distance) *
+                            (link.source.x - link.target.x) + link.target.x,
+                        y: ((SETTING.size.nodeRadius + 0) / distance) *
+                            (link.source.y - link.target.y) + link.target.y,
+                    }
                     ctx.strokeStyle = SETTING.fill.stroke;
                     ctx.lineWidth = SETTING.size.linkStrokeWidth;
-                }
-                ctx.moveTo(newSourceNode.x, newSourceNode.y);
-                ctx.lineTo(newTargetNode.x, newTargetNode.y);
-                ctx.stroke();
-            })
+                    ctx.moveTo(newSourceNode.x, newSourceNode.y);
+                    ctx.lineTo(newTargetNode.x, newTargetNode.y);
+                    ctx.stroke();
+                })
+                needToHighLightLink.forEach(link => {
+                    ctx.beginPath();
+                    const distance = Math.hypot(link.source.x - link.target.x, link.source.y - link.target.y);
+                    const newSourceNode = {
+                        x: ((distance - SETTING.size.nodeRadius) / distance) * (link.source.x - link.target.x) + link.target.x,
+
+                        y: ((distance - SETTING.size.nodeRadius) / distance) * (link.source.y - link.target.y) + link.target.y,
+                    }
+                    const newTargetNode = {
+                        x: ((SETTING.size.nodeRadius + 0) / distance) *
+                            (link.source.x - link.target.x) + link.target.x,
+                        y: ((SETTING.size.nodeRadius + 0) / distance) *
+                            (link.source.y - link.target.y) + link.target.y,
+                    }
+
+                    if (SETTING.alarming.link.flag && link.is_alarming) {
+                        ctx.strokeStyle = SETTING.alarming.link.stroke
+                        ctx.lineWidth = SETTING.alarming.link.strokeWidth;
+                    } else {
+                        ctx.strokeStyle = SETTING.fill.highlightLinkStroke;
+                        ctx.lineWidth = SETTING.size.highlightLinkStrokeWidth;
+                    }
+                    ctx.moveTo(newSourceNode.x, newSourceNode.y);
+                    ctx.lineTo(newTargetNode.x, newTargetNode.y);
+                    ctx.stroke();
+                })
+            }
         }
 
         const renderRefresh = () => {
@@ -488,14 +587,11 @@ export default function Canvas() {
             ctx.restore();
         }
 
-
         //如果三个条件都是空，重绘
         if (!areaOption.length && !roleOption.length && !linkOption.length) {
-
             renderRefresh()
             return;
         }
-
 
         //有一个非空，执行下面的判断
         if (areaOption.length) {
@@ -556,7 +652,7 @@ export default function Canvas() {
 
 
     /**
-     * 专注模式
+     * 专注模式，里面有渲染函数
      * @param areaOption : 每个元素是一个数组，第一个元素是AZ，第二个元素是POD
      * @param roleOption : 用户选择角色的数组
      * @param linkOption : 用户选择连边类型的数组

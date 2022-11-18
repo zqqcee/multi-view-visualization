@@ -31,7 +31,7 @@ export default function SwitchBar() {
     }
     return (
         <div className='switchbar'>
-            <label className='switch-label' children="数据集：" /> <Select style={{ width: '200px' }} options={dataOption} defaultValue={dataOption[0]} onChange={handleChangeData} />
+            <label className='switch-label' children="数据集：" /> <Select style={{ width: 'auto' }} options={dataOption} defaultValue={dataOption[0]} onChange={handleChangeData} />
 
             <label className='switch-label' children="专注模式：" /><Switch className="switch" checkedChildren="开启" unCheckedChildren="关闭" defaultChecked={mode === FOCUS} onChange={handleChangeMode} />
 

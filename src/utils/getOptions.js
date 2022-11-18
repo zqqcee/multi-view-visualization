@@ -1,5 +1,5 @@
 /**获取所有options */
-
+import { dataSets } from "./getData";
 
 /**
  *  [
@@ -66,7 +66,11 @@ export const getAreaSelection = (data) => {
 
 export const getDataOption = (dataSets) => {
     return Object.entries(dataSets).map(([dataname, _]) => {
-        return { label: dataname, value: dataname }
+        const nodesCnt = dataSets[dataname].nodes.length
+        const linksCnt = dataSets[dataname].links.length
+        const alarmingnodescnt = dataSets[dataname].nodes.filter(node => node.is_alarming).length
+        const alarminglinkscnt = dataSets[dataname].links.filter(link => link.is_alarming).length
+        return { label: `${dataname} => 点:${nodesCnt}(${alarmingnodescnt}告警) || 边:${linksCnt}(${alarminglinkscnt}告警)  `, value: dataname }
     })
 }
 
