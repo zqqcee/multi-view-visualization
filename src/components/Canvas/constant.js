@@ -12,7 +12,7 @@ export const SETTING = {
         'server': "#9467bd",
         'virtual': "#9467bd",
         "stroke": "#6c757d",
-        highlightLinkStroke: "#000000"
+        highlightLinkStroke: "blue"
     },
     opacityFill: {
         'core': "#2ca02c80",
@@ -28,7 +28,7 @@ export const SETTING = {
         node: {
             fill: 'red',
             radius: 15,
-            flag: false,//全局开关
+            flag: true,//全局开关
         },
         link: {
             stroke: 'red',

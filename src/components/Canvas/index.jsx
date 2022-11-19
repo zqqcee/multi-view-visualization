@@ -7,6 +7,7 @@ import { SETTING } from './constant'
 import { dataSets } from '../../utils/getData'
 import { handleData } from '../../utils/handleData'
 import { changeDataInfo } from "../../redux/dataInfoSlice"
+import { getNodesDetail, getLinksDetail, getAreaDetail } from "../../utils/getDataInfo"
 
 /** global storage */
 let transformObj = { k: 1, x: 1, y: 0 };
@@ -24,7 +25,7 @@ let mode
 //TODO: 节点拖拽(已尝试)
 //TODO: 自动缩放（已尝试）
 //TODO: bubbleSet
-//TODO: 更加详细的数据说明（做一个小框）
+
 //TODO: 节点搜索功能（新页面）
 //TODO: 图例
 
@@ -159,7 +160,7 @@ export default function Canvas() {
 
 
         //FIXME: 因为zoom只用了这一个刷新函数，所以要在这里判断模式，采用不同的绘制方式（高亮/过滤）
-        //FIXME: 添加节点告警的绘制，没有被用户选中的节点，不会显示告警
+        //FIXME: 添加节点告警的绘制，这是一个可配置项
         const drawNodes = () => {
             if (mode === HIGHLIGHT) {
                 if (needToHighLightNodeIp.size === 0) {
@@ -205,7 +206,6 @@ export default function Canvas() {
                     ctx.beginPath();
                     ctx.moveTo(node.x + SETTING.size.nodeRadius, node.y);
 
-
                     if (SETTING.alarming.node.flag && node.is_alarming) {
                         ctx.arc(node.x, node.y, SETTING.alarming.node.radius, 0, 2 * Math.PI);
                         ctx.fillStyle = SETTING.alarming.node.fill
@@ -218,7 +218,6 @@ export default function Canvas() {
             }
         }
 
-        //TODO: 添加连边告警的绘制
         const drawLinks = () => {
             if (mode === HIGHLIGHT) {
                 if (needToHighLightLink.length === 0) {
@@ -349,7 +348,7 @@ export default function Canvas() {
             .force("charge", d3.forceManyBody().strength(-90))
             .on("tick", () => renderRefresh())
 
-        simulation.alphaTarget(0.1).restart()
+        simulation.alpha(0.3).restart()
 
         const drawNodes = () => {
             nodes.forEach(node => {
@@ -370,19 +369,25 @@ export default function Canvas() {
         if (mode === FOCUS) {
             let highlightNodeNum;
             let highlightLinkNum;
-
+            let detailInfo = {}
             if (nodes.length === data.nodes.length) {
                 highlightNodeNum = 0;
+                detailInfo.nodes = {}
+                detailInfo.area = {}
             } else {
                 highlightNodeNum = nodes.length
+                detailInfo.nodes = getNodesDetail(nodes)
+                detailInfo.area = getAreaDetail(nodes)
             }
 
             if (links.length === data.links.length) {
                 highlightLinkNum = 0
+                detailInfo.links = {}
             } else {
                 highlightLinkNum = links.length
+                detailInfo.links = getLinksDetail(links)
             }
-            dispatch(changeDataInfo({ highlightNodeNum, highlightLinkNum }))
+            dispatch(changeDataInfo({ highlightNodeNum, highlightLinkNum, detailInfo }))
         }
 
         const drawLinks = () => {
@@ -565,18 +570,25 @@ export default function Canvas() {
             //FIXME: 添加高亮节点，高亮连边数量统计功能
             let highlightNodeNum;
             let highlightLinkNum;
+            let detailInfo = {}
             if (needToHighLightNodeIp.size === data.nodes.length) {
                 highlightNodeNum = 0;
+                detailInfo.nodes = {}
+                detailInfo.area = {}
             } else {
                 highlightNodeNum = needToHighLightNodeIp.size
+                detailInfo.nodes = getNodesDetail(nodes.filter(node => needToHighLightNodeIp.has(node.mgmt_ip)))
+                detailInfo.area = getAreaDetail(nodes.filter(node => needToHighLightNodeIp.has(node.mgmt_ip)))
             }
 
             if (needToHighLightLink.length === data.links.length) {
                 highlightLinkNum = 0
+                detailInfo.links = {}
             } else {
                 highlightLinkNum = needToHighLightLink.length
+                detailInfo.links = getLinksDetail(needToHighLightLink)
             }
-            dispatch(changeDataInfo({ highlightNodeNum, highlightLinkNum }))
+            dispatch(changeDataInfo({ highlightNodeNum, highlightLinkNum, detailInfo }))
 
             ctx.save();
             ctx.clearRect(0, 0, width, height);

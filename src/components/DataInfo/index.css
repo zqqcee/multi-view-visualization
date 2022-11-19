@@ -3,7 +3,7 @@
     /* background-color: pink; */
     width: auto;
     margin-left: 225px;
-    margin-top: 25px;
+    margin-top: 7px;
     font-size: 20px;
 }
 
@@ -11,4 +11,27 @@
     color: brown;
     font-weight: bold;
     font-size: 25px;
+}
+
+.alarmingInfo{
+    color:red;
+    font-weight: bold;
+}
+.azInfo{
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.tooltip{
+    width: auto;
+    height:300px;
+    overflow-y: scroll;
+}
+
+.nodetooltip{
+    height:auto !important
+}
+
+.btn{
+    margin-top: -10px !important
 }

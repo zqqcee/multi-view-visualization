@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { DEFAULT } from "./constant";
 
 
 /** area，role，link selection */
