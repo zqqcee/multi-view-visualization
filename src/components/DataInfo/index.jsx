@@ -68,7 +68,7 @@ export default function DataInfo() {
                                 </Fragment>
                             )
                         }
-                        return (<p key={key} className='podInfo'>{`${key}数量 : ${value}`}</p>)
+                        return (<p key={key} className='podInfo'>{`${key.split('_')[1]}  设备数量 : ${value}`}</p>)
                     })
                 }
             </div>)
