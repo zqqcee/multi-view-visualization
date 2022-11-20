@@ -13,7 +13,7 @@ export default function DataInfo() {
     const nodesInfo = Object.entries(detailInfo.nodes)
     let nodesContent
     if (!nodesInfo.length) {
-        nodesContent = (<p className='nodataInfo'>您似乎还未选择想要查看的节点</p>)
+        nodesContent = (<p key={1} className='nodataInfo'>您似乎还未选择想要查看的节点</p>)
     } else {
         nodesContent = (
             <div className='tooltip nodetooltip'>
@@ -32,7 +32,7 @@ export default function DataInfo() {
     const linksInfo = Object.entries(detailInfo.links)
     let linksContent
     if (!linksInfo.length) {
-        linksContent = (<p className='nodataInfo'>您似乎还未选择想要查看的连边</p>)
+        linksContent = (<p key={2} className='nodataInfo'>您似乎还未选择想要查看的连边</p>)
     } else {
         linksContent = (
             <div className='tooltip'>
@@ -49,10 +49,10 @@ export default function DataInfo() {
     }
 
     const areaInfo = Object.entries(detailInfo.area)
-    console.log(areaInfo);
+
     let areaContent
     if (!areaInfo.length) {
-        areaContent = (<p className='nodataInfo'>您似乎还未选择想要查看的区域</p>)
+        areaContent = (<p key={3} className='nodataInfo'>您似乎还未选择想要查看的区域</p>)
     } else {
         areaContent = (
             <div className='tooltip'>
@@ -63,7 +63,7 @@ export default function DataInfo() {
                             return (
                                 <Fragment>
                                     <hr />
-                                        <p key={key} className='azInfo'>{`${key}设备数量: ${value}`}</p>
+                                    <p key={key} className='azInfo'>{`${key}设备数量: ${value}`}</p>
                                     <hr />
                                 </Fragment>
                             )
@@ -76,37 +76,9 @@ export default function DataInfo() {
 
 
 
-
-
-    /**
-        {
-            "nodes": {
-                "alarmingCnt": 11,
-                "SPINE": 55,
-                "LEAF": 363,
-                "core": 16,
-                "server": 1,
-                "virtual": 32
-            },
-            "links": {
-                "alarmingCnt": 0,
-                "LEAF_SPINE": 648,
-                "SPINE_SPINE": 8
-            }
-        }
-    */
-
-    const content = (
-        <div>
-            <p>Content</p>
-            <p>Content</p>
-        </div>
-    );
-
-    console.log();
     return (
         <div className='datainfo'>
-            已选择节点数量:<span className={highlightNodeNum === 0 ? null : 'highlighttext'}>{highlightNodeNum}</span>
+            已选择节点数量:<span className={highlightNodeNum === 0 ? null : 'highlighttext'}>{highlightNodeNum} </span>
             已选择连边数量:<span className={highlightLinkNum === 0 ? null : 'highlighttext'}>{highlightLinkNum}</span>
 
 
