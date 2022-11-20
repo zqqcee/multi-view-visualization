@@ -1,0 +1,17 @@
+.legendContainer {
+    position: absolute;
+    height: 250px;
+    width: 180px;
+    margin-left: 1284px;
+    margin-top: 53px;
+    background-color: rgb(255, 255, 255);
+    border: 1px solid;
+}
+
+.legendText {
+    font-size: 16px;
+}
+
+.link {
+    font-size: 16px;
+}
