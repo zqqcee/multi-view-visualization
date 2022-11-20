@@ -33,7 +33,7 @@ export const SETTING = {
         link: {
             stroke: 'red',
             strokeWidth: 4,
-            flag: false,//全局开关
+            flag: true,//全局开关
         }
     }
 

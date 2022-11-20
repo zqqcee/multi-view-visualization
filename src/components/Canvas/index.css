@@ -12,9 +12,14 @@
 .canvasBox {
     margin-left: 222px;
     margin-right: 20px;
-    margin-top: 55px;
-    
+    margin-top: 4px;
+
 }
-.infoLabel{
+
+.infoLabel {
     font-size: 20px;
+}
+
+.canvasNode {
+    margin-top: 55px;
 }
