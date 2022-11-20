@@ -1,22 +1,25 @@
 import React from 'react'
 import Header from './components/Header'
+import UserSelection from './components/UserSelection'
 import SwitchBar from './components/SwitchBar'
-import { useRoutes } from 'react-router-dom'
-import { routesEle } from './routers'
-import Navigator from './components/Navigator'
+import Canvas from './components/Canvas'
+import DataInfo from './components/DataInfo'
 
 
 export default function App() {
 
-    //TODO:route
+
     return (
         <div>
             <Header />
             <SwitchBar />
-            <Navigator />
+            <UserSelection />
+            <DataInfo />
+            <Canvas />
 
-            {useRoutes(routesEle)}
         </div>
     )
+
+
 
 }

@@ -61,3 +61,31 @@ export const getAreaDetail = (nodes) => {
     })
     return info
 }
+
+
+/** 用于搜索组件中的自动补全 */
+/**
+ * @param data 数据集
+ * @param value 用户输入
+ */
+export const getIpOption = (data, value) => {
+    const nodes = data.nodes
+    const ipList = nodes.map(node => node.mgmt_ip)
+    return ipList.filter(ip => ip.indexOf(value) >= 0).map(ip => ({ label: ip, value: ip }))
+}
+
+
+
+
+/** 用于获取图例中的角色信息 */
+export const getLegendInfo = (data) => {
+    const nodes = data.nodes
+    let info = []
+    nodes.forEach(node => {
+        if (info.indexOf(node.role) < 0) {
+            info.push(node.role)
+        }
+    })
+    info.push('alarmingNode')
+    return info
+}

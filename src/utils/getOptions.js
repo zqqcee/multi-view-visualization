@@ -1,5 +1,4 @@
 /**获取所有options */
-import { dataSets } from "./getData";
 
 /**
  *  [

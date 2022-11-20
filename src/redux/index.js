@@ -3,9 +3,11 @@
 import optionReducer from './optionSlice';
 import selectionReducer from "./selectionSlice"
 import dataInfoReducer from "./dataInfoSlice"
+import searchInfoReducer from "./searchInfoSlice"
 
 export const reducers = {
     option: optionReducer,
     selection: selectionReducer,
-    dataInfo: dataInfoReducer
+    dataInfo: dataInfoReducer,
+    searchInfo: searchInfoReducer
 }

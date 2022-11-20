@@ -12,7 +12,6 @@ export const optionSlice = createSlice({
     },
     reducers: {
         changedata: ((state, action) => {
-            console.log(state);
             //action.payload是我们传进来的值
             //这里的state是一个proxy对象，直接修改即可
             state.dataName = action.payload
