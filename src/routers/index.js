@@ -1,6 +1,6 @@
 import SearchView from "../pages/SearchView";
 import { Navigate } from "react-router-dom";
-import Overview from "../pages/Overview";
+import OverView from "../pages/OverView";
 
 
 export const routesEle = [
@@ -11,12 +11,11 @@ export const routesEle = [
 
     {
         path: "/overview",
-        element: <Overview />
+        element: <OverView />
     },
 
     {
         path: "/searchview",
         element: <SearchView />
-    }
-
+    },
 ]
