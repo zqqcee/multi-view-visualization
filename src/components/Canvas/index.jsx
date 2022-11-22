@@ -26,9 +26,8 @@ let mode
 //TODO: 自动缩放（已尝试）
 //TODO: bubbleSet
 
-//TODO: 节点搜索功能（新页面）
-//TODO: 图例
-
+//FIXME: 图例
+//FIXME: 节点搜索功能（新页面）
 export default function Canvas() {
     const dataName = useSelector(state => state.option.dataName)
     const datasource = dataSets[dataName]
@@ -45,10 +44,14 @@ export default function Canvas() {
 
     useLayoutEffect(() => {
         initCanvas()
-        //FIXME: 路由切换后，销毁simulation，防止页面卡顿。
+        //FIXME: 数据切换后，销毁simulation，防止页面卡顿。
         return () => { simulation ? simulation.stop() : simulation = null }
     }, [dataName])
 
+    useEffect(() => () => {
+        //FIXME：11-22 router切换后，销毁simulation
+        simulation ? simulation.stop() : simulation = null
+    })
 
     //FIXME:更换数据集后，高亮的节点清空
     //FIXME:更换数据集重新执行initCanvas
@@ -86,7 +89,7 @@ export default function Canvas() {
 
     const initCanvas = () => {
         d3.select('#container').select('*').remove()
-        const height = document.querySelector("#container").clientWidth //BUG:改为高
+        const height = document.querySelector("#container").clientHeight //BUG:改为高
         const width = document.querySelector("#container").clientWidth
         const canvasContainer = d3.select('#container').append('g')
             .attr('id', 'canvasContainer')

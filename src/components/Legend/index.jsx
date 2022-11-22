@@ -12,7 +12,6 @@ export default function Legend() {
     const data = dataSets[dataName]
     //只有角色
     const legendList = getLegendInfo(data)
-    console.log(legendList);
 
     useEffect(() => {
         const height = document.querySelector('#legendContainer').clientHeight

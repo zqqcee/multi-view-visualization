@@ -25,10 +25,9 @@ export default function SearchSvg() {
             cleanSvg()
             return
         }
-
         cleanSvg()
         initSvg()
-
+        initLegend()
         const datum = getDataBySearchIps(searchIps)//根据用户输入的ip得到的需要绘制的数据
         if (datum.nodes.length) {
             drawLayout(datum)
@@ -75,7 +74,6 @@ export default function SearchSvg() {
         simulation ? simulation.stop() : simulation = null
         d3.select('#scontainer').select('*').remove()
     }
-
 
     /**
      * @param searchIps:用户输入的两个ip地址，用‘/’分隔
@@ -141,8 +139,6 @@ export default function SearchSvg() {
         return { nodes: Array.from(nodesSet), links: Array.from(linksSet) }
 
     }
-
-
 
     const drawLayout = (data) => {
         const svg = d3.select('#svg')
@@ -237,7 +233,9 @@ export default function SearchSvg() {
 
     }
 
+    const initLegend = () => {
 
+    }
 
     return (
         <Fragment>

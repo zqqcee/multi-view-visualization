@@ -9,6 +9,8 @@ import Navigator from './components/Navigator'
 export default function App() {
 
     //TODO:route
+
+
     return (
         <div>
             <Header />
