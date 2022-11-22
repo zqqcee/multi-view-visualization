@@ -126,3 +126,29 @@ export default function generate() {
 
   
 
+```FIXME(2022-11-21)```：新增节点检索功能
+
+- 输入IP（有自动补全，输入ip中的几个数字即可）
+
+  ![image-20221122160815185](https://raw.githubusercontent.com/zqqcee/img_repo/main/img/202211221608202.png)
+
+- 检索节点的两跳结构
+
+![image-20221122160840223](https://raw.githubusercontent.com/zqqcee/img_repo/main/img/202211221608382.png)
+
+- **所有节点可拖动，放缩**。拖动时可配置其他节点是否可移动。在```src/components/SearchSvg/constant.js```里修改
+
+  ```json
+      dragMode: {
+          flag: true //默认不移动，改为false时，拖动节点其他节点会移动
+      }
+  ```
+
+  
+
+```FIXME(2022-11-22)```：新增数据集数据统计功能
+
+![image-20221122161112985](https://raw.githubusercontent.com/zqqcee/img_repo/main/img/202211221611036.png)
+
+
+
