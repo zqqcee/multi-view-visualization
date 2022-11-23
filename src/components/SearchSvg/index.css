@@ -1,7 +1,40 @@
 .scontainer {
     width: auto;
-    height: 700px;
+    height: 730px;
     margin-top: 20px;
     overflow-y: hidden
         /* background-color: pink; */
+}
+
+.bling {
+    animation-timing-function: ease-in;
+    animation-name: light;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+    fill: rgb(13, 0, 255);
+    opacity: 1;
+    font-weight: bold;
+}
+
+@keyframes light {
+    from {
+        fill: rgb(13, 0, 255);
+    }
+
+    25% {
+        fill: rgb(136, 138, 253);
+    }
+
+    50% {
+        fill: rgb(202, 199, 248);
+    }
+
+    75% {
+        fill: rgb(173, 173, 255);
+    }
+
+
+    to {
+        fill: rgb(13, 0, 255);
+    }
 }

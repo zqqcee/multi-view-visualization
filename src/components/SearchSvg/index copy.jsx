@@ -17,21 +17,22 @@ export default function SearchSvg() {
     const data = handleData(datasource)
 
     const searchIps = useSelector(state => state.searchInfo.value)
+    const dispatch = useDispatch()
 
 
     useEffect(() => {
+        console.log(searchIps);
         if (!searchIps) {
             cleanSvg()
             return
         }
         cleanSvg()
         initSvg()
+        initLegend()
         const datum = getDataBySearchIps(searchIps)//根据用户输入的ip得到的需要绘制的数据
         if (datum.nodes.length) {
             drawLayout(datum)
         }
-        highlightCircle(searchIps);
-
 
         //FIXME: return会导致第二次检索画布上没有节点
         // return (() => {
@@ -41,77 +42,33 @@ export default function SearchSvg() {
 
     }, [searchIps])
 
-    /**
-     * @param zoomObj: 绑定的d3.zoom()对象
-     * @param svgContainerId: svg标签Id
-     * @param svgBodyId: g标签Id
-     * @param marginParam: 边距设置
-     * @param duration: 动画时长
-     * 
-     */
-    const autoZoom = (zoomObj, svgContainerId, svgBodyId, marginParam, duration) => {
 
-        const svgContainer = document.querySelector(`#${svgContainerId}`);
-        const svgBody = d3.select(`#${svgBodyId}`);
 
-        const viewBox = svgBody.node().getBBox();//g
-        //svg
-        const containerWidth = svgContainer.clientWidth
-        const containerHeight = svgContainer.clientHeight
-        // margin setting
-        const rowMargin = marginParam.row
-        const colMargin = marginParam.col
-
-        const scale = Math.min((containerWidth - rowMargin) / viewBox.width, (containerHeight - colMargin) / viewBox.height)
-
-        const offsetX = (containerWidth - rowMargin) / 2 - (viewBox.x + viewBox.width / 2) * scale
-        const offsetY = (containerHeight - colMargin) / 2 - (viewBox.y + viewBox.height / 2) * scale
-
-        // d3.zoomIdentity:缩放参数，返回Transform{k:1,x:0,y:0}
-        const t = d3.zoomIdentity.translate(offsetX, offsetY).scale(scale)
-        d3.select(`#${svgContainerId}`).transition().duration(duration).call(zoomObj.transform, t)
-    }
 
     const initSvg = () => {
         const height = document.querySelector("#scontainer").clientHeight
         const width = document.querySelector("#scontainer").clientWidth
-        let svgContainer = d3.select("#scontainer").append('svg')
+        let svgContainer = d3.select("#scontainer").append('g')
             .attr('id', 'svgContainer')
             .attr('class', 'svgContainer')
             .attr('height', height)
             .attr('width', width)
 
-        svgContainer.append('g')
+        svgContainer.append('svg')
             .attr('id', 'svg')
             .attr('class', 'svg')
             .attr('height', height)
             .attr('width', width)
 
-        let zoomObj = d3.zoom()
-            .scaleExtent([1 / 50, 2])
-
         svgContainer.call(
-            zoomObj.on('zoom', e => {
-                let { k, x, y } = e.transform;
-                d3.select('#svg').style('transform', `translate(${x}px, ${y}px) scale(${k})`);
-            })
+            d3.zoom()
+                .scaleExtent([1 / 50, 2])
+                .on('zoom', e => {
+                    d3.select("#svgContainer").attr("transform", e.transform)
+                    let { k, x, y } = e.transform;
+                    d3.select('#svg').style('transform', `translate(${x}px, ${y}px) scale(${k})`);
+                })
         )
-
-        document.onkeydown = (e) => {
-            if (e.keyCode === 17) {
-                autoZoom(
-                    zoomObj,
-                    'svgContainer',
-                    'svg',
-                    {
-                        row: 20,
-                        col: 100
-                    },
-                    1000
-                )
-            }
-
-        }
 
     }
 
@@ -229,9 +186,6 @@ export default function SearchSvg() {
 
         let nodeCircle = nodeG
             .append('circle')
-            .attr('class', 'nodeCircle')
-            // .attr('class','bling')
-            .attr('id', d => `ip_${d.mgmt_ip.replaceAll('.', "")}`)
             .attr('r', SETTING.size.nodeRadius)
             .attr('fill', d => SETTING.fill[d.role.toLowerCase()])
             .call(
@@ -252,6 +206,7 @@ export default function SearchSvg() {
                     .on('end', event => {
                         // simulation.alphaTarget(simulation.alphaMin() * 0.1).restart()
                         simulation.alphaTarget(0.3).restart()
+
                     })
             );
 
@@ -280,15 +235,8 @@ export default function SearchSvg() {
 
     }
 
-    const highlightCircle = (searchIps) => {
-        const ipList = searchIps.split('/')
-        ipList.forEach(ip => {
-            if (!ip) {
-                return
-            }
-            console.log(ip);
-            d3.select(`#ip_${ip.replaceAll('.', "")}`).attr('class', 'bling')
-        })
+    const initLegend = () => {
+
     }
 
     return (

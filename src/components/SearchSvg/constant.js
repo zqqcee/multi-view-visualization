@@ -1,6 +1,6 @@
 export const SETTING = {
     size: {
-        nodeRadius: 10,
+        nodeRadius: 6,
         highlightNodeRadius: 6,
         linkStrokeWidth: 1,
         highlightLinkStrokeWidth: 1

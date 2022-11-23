@@ -152,3 +152,10 @@ export default function generate() {
 
 
 
+```FIXME(2022-11-23)```搜索界面新增搜索的节点高亮功能
+
+![屏幕录制2022-11-23 下午5.40.03](https://raw.githubusercontent.com/zqqcee/img_repo/main/img/202211231741639.gif)
+
+```FIXME(2022-11-23)```搜索界面新增画布自动放缩功能
+
+![屏幕录制2022-11-23 下午5.42.28](https://raw.githubusercontent.com/zqqcee/img_repo/main/img/202211231743004.gif)
