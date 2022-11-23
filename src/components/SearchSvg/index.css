@@ -1,7 +1,7 @@
 .scontainer {
-    width: 1500px;
-    height: 594px;
+    width: auto;
+    height: 700px;
     margin-top: 20px;
-    overflow-y: scroll;
-    /* background-color: pink; */
+    overflow-y: hidden
+        /* background-color: pink; */
 }

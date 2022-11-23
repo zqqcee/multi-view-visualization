@@ -6,7 +6,7 @@
     /* margin-top: 20px; */
     width: auto;
     height: 1000px;
-    overflow: scroll;
+    /* overflow: scroll; */
 }
 
 .canvasBox {

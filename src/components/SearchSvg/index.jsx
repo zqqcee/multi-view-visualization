@@ -21,6 +21,7 @@ export default function SearchSvg() {
 
 
     useEffect(() => {
+        console.log(searchIps);
         if (!searchIps) {
             cleanSvg()
             return
@@ -33,10 +34,11 @@ export default function SearchSvg() {
             drawLayout(datum)
         }
 
-        return (() => {
-            cleanSvg();
-            dispatch(search({ value: "" }))
-        })
+        //FIXME: return会导致第二次检索画布上没有节点
+        // return (() => {
+        //     cleanSvg();
+        //     dispatch(search({ value: "" }))
+        // })
 
     }, [searchIps])
 
@@ -80,7 +82,6 @@ export default function SearchSvg() {
      * @return {nodes,links}: json数据，用于渲染
      */
     const getDataBySearchIps = (searchIps) => {
-        console.log(searchIps);
         const [firstIp, secondIp] = searchIps.split('/')
         //找与firstIp与secondIp相连的两跳邻居
         const nodes = data.nodes
@@ -135,7 +136,6 @@ export default function SearchSvg() {
         }
 
 
-
         return { nodes: Array.from(nodesSet), links: Array.from(linksSet) }
 
     }
@@ -148,9 +148,22 @@ export default function SearchSvg() {
         if (!nodes.length) {
             return;
         }
-
         const height = document.querySelector("#scontainer").clientHeight
         const width = document.querySelector("#scontainer").clientWidth
+
+
+        //FIXME: 先添加link，再添加circle，可以保证连边在circle的下层
+        const linkLine = svg.append('g')
+            .attr('class', 'links')
+            .attr('id', 'links')
+            .selectAll('.linkG')
+            .data(links)
+            .join('line')
+            .attr('class', 'link')
+            .attr('id', d => `${d.source.mgmt_ip}_${d.target.mgmt_ip}`)
+            .attr('stroke', d => d.stroke || SETTING.fill.stroke)
+            .attr('stroke-width', d => d.stokeWidth || SETTING.size.linkStrokeWidth)
+
 
         const nodeG = svg.append('g')
             .attr('class', 'nodes')
@@ -170,7 +183,6 @@ export default function SearchSvg() {
                 }
             });
         }
-
 
         let nodeCircle = nodeG
             .append('circle')
@@ -200,35 +212,25 @@ export default function SearchSvg() {
 
 
 
-        const linkLine = svg.append('g')
-            .attr('class', 'links')
-            .attr('id', 'links')
-            .selectAll('.linkG')
-            .data(links)
-            .join('line')
-            .attr('class', 'link')
-            .attr('id', d => `${d.source.mgmt_ip}_${d.target.mgmt_ip}`)
-            .attr('stroke', d => d.stroke || SETTING.fill.stroke)
-            .attr('stroke-width', d => d.stokeWidth || SETTING.size.linkStrokeWidth)
 
         simulation = d3.forceSimulation(nodes)
             .force("charge", d3.forceManyBody().strength(-80))
             .force("center", d3.forceCenter(width / 2, height / 2))
             .force("collide", d3.forceCollide().radius(SETTING.size.nodeRadius).strength(0.8))
             //设定forceX与forceY使得它们更加聚拢在中间位置
-            .force("x", d3.forceX(width / 2).strength(0))
-            .force("y", d3.forceY(height / 2).strength(0))
+            //FIXME:调整了strength
+            .force("x", d3.forceX(width / 2).strength(0.1))
+            .force("y", d3.forceY(height / 2).strength(0.1))
             .force("link", d3.forceLink(links).id(d => {
                 return d.mgmt_ip
             }).strength(0.5).distance(10))
             .on("tick", () => {
-                nodeCircle.attr("cx", function (d) { return parseInt(d.x); })
-                    .attr("cy", function (d) { return parseInt(d.y); });
-
                 linkLine.attr("x1", function (d) { return parseInt(d.source.x); })
                     .attr("y1", function (d) { return parseInt(d.source.y); })
                     .attr("x2", function (d) { return parseInt(d.target.x); })
                     .attr("y2", function (d) { return parseInt(d.target.y); });
+                nodeCircle.attr("cx", function (d) { return parseInt(d.x); })
+                    .attr("cy", function (d) { return parseInt(d.y); });
             })
 
     }
