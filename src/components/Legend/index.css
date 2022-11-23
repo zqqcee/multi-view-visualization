@@ -2,8 +2,11 @@
     position: absolute;
     height: 250px;
     width: 180px;
-    margin-left: 1284px;
-    margin-top: 53px;
+    /* margin-left: 1284px;
+    margin-top: 53px; */
+    margin-right: 10px;
+    right: 0;
+    top: 20;
     background-color: rgb(255, 255, 255);
     border: 1px solid;
 }

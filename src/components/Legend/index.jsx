@@ -34,6 +34,7 @@ export default function Legend() {
             .attr('id', 'svg')
             .attr('height', height)
             .attr('width', width)
+            // .attr('transform', `translate(${-width},${-height})`)
 
         const legendGroup = svg.selectAll('.legendG')
             .data(legendList)
@@ -113,7 +114,7 @@ export default function Legend() {
     // }
 
     return (
-        <div className='legendContainer' id="legendContainer">
+        <div className='legendContainer' id="legendContainer" >
 
         </div>
     )
