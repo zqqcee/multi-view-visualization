@@ -1,7 +1,7 @@
 import React from 'react'
 import { Table, Divider } from 'antd';
 import "./index.css"
-import { dataInfo } from "../../utils/computeTotalInfo"
+import { getTotalInfo } from "../../utils/getDataInfo"
 import { useSelector } from 'react-redux';
 import { dataSets } from "../../utils/getData"
 
@@ -12,7 +12,7 @@ export default function Home() {
     const data = dataSets[dataName]
     console.log(data);
 
-    const [nodeCnt, linkCnt, podCnt, azCnt, roleInfo, linkInfo, alarmingNodesCnt, alarmingLinksCnt] = dataInfo(data)
+    const [nodeCnt, linkCnt, podCnt, azCnt, roleInfo, linkInfo, alarmingNodesCnt, alarmingLinksCnt] = getTotalInfo(data)
 
     //节点数量，pod数量，
     const gencolumns = [

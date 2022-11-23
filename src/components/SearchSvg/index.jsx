@@ -142,12 +142,12 @@ export default function SearchSvg() {
 
         //firstIp
         links.forEach(link => {
-            if (link.source === firstIp || link.dst_ip === firstIp) {
+            if (link.src_ip === firstIp || link.dst_ip === firstIp) {
                 nodesSet.add(link.source)
                 nodesSet.add(link.target)
                 linksSet.add(link)
-                let curSrcIp = link.source
-                let curDstIp = link.target
+                let curSrcIp = link.source.mgmt_ip
+                let curDstIp = link.target.mgmt_ip
                 links.forEach(link => {
                     if (link.src_ip === curSrcIp || link.dst_ip === curSrcIp || link.src_ip === curDstIp || link.dst_ip === curDstIp) {
                         nodesSet.add(link.source)
@@ -161,12 +161,12 @@ export default function SearchSvg() {
         //secondIp，添加之前要判断是否存在第二个ip
         if (secondIp) {
             links.forEach(link => {
-                if (link.source === secondIp || link.dst_ip === secondIp) {
+                if (link.src_ip === secondIp || link.dst_ip === secondIp) {
                     nodesSet.add(link.source)
                     nodesSet.add(link.target)
                     linksSet.add(link)
-                    let curSrcIp = link.source
-                    let curDstIp = link.target
+                    let curSrcIp = link.source.mgmt_ip
+                    let curDstIp = link.target.mgmt_ip
                     links.forEach(link => {
                         if (link.src_ip === curSrcIp || link.dst_ip === curSrcIp || link.src_ip === curDstIp || link.dst_ip === curDstIp) {
                             nodesSet.add(link.source)
@@ -178,7 +178,7 @@ export default function SearchSvg() {
             })
         }
 
-
+        console.log({ nodes: Array.from(nodesSet), links: Array.from(linksSet) });
         return { nodes: Array.from(nodesSet), links: Array.from(linksSet) }
 
     }
