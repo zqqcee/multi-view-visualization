@@ -1,8 +1,7 @@
 import React, { Fragment, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import {  useSelector } from 'react-redux'
 import { dataSets } from '../../utils/getData'
 import { handleData } from "../../utils/handleData"
-import { search } from '../../redux/searchInfoSlice'
 import { SETTING } from './constant'
 import * as d3 from "d3"
 import "./index.css"

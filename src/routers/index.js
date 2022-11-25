@@ -6,10 +6,10 @@ import Home from "../components/Home";
 
 
 export const routesEle = [
-    // {
-    //     path: '/',
-    //     element: <Navigate to="/searchview" />
-    // },
+    {
+        path: '/',
+        element: <Navigate to="/homepage" />
+    },
 
     {
         path: "/overview",

@@ -1,0 +1,41 @@
+.bubbleContainer {
+    width: 40%;
+    height: 800px;
+    float: left;
+    /* background-color: pink; */
+    /* position: fixed; */
+    left: 0;
+}
+
+.alarmingBubble {
+    animation-timing-function: ease-in;
+    animation-name: alarm;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+    fill: rgb(255, 0, 47);
+    opacity: 1;
+    font-weight: bold;
+}
+
+@keyframes alarm {
+    from {
+        fill: #ff0000;
+    }
+
+    25% {
+        fill: rgb(255, 85, 85);
+    }
+
+    50% {
+        fill: rgb(249, 102, 102);
+    }
+
+    75% {
+        fill: rgb(255, 57, 57);
+    }
+
+
+    to {
+        fill: rgb(255, 0, 0);
+    }
+}

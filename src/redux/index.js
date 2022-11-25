@@ -5,11 +5,13 @@ import selectionReducer from "./selectionSlice"
 import dataInfoReducer from "./dataInfoSlice"
 import searchInfoReducer from "./searchInfoSlice"
 import modeFlagReducer from "./modeFlagSlice"
+import bubbleReducer from "./bubbleSlice"
 
 export const reducers = {
     option: optionReducer,
     selection: selectionReducer,
     dataInfo: dataInfoReducer,
     searchInfo: searchInfoReducer,
-    modeFlag: modeFlagReducer
+    modeFlag: modeFlagReducer,
+    bubble: bubbleReducer
 }

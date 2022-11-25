@@ -1,0 +1,9 @@
+.bubbleDetailContainer {
+    width: 60%;
+    height: 750px;
+    /* background-color: pink; */
+    /* position: fixed; */
+    border-left: 1px double;
+    float: left;
+    right: 0;
+}

@@ -1,0 +1,13 @@
+.areaInfo {
+    position: fixed;
+    bottom: 0;
+    background-color: #d1eaff;
+    width: 40%;
+    height: 3%;
+
+    /* font setting */
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    color: mediumpurple;
+}
