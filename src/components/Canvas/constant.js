@@ -3,16 +3,16 @@ export const SETTING = {
         nodeRadius: 5,
         highlightNodeRadius: 6,
         linkStrokeWidth: .3,
-        highlightLinkStrokeWidth: 1
+        highlightLinkStrokeWidth: 2
     },
     fill: {
-        'core': "#2ca02c",
-        'spine': "#1f77b4",
-        'leaf': "#ff7f0e",
-        'server': "#9467bd",
-        'virtual': "#9467bd",
+        'core': "#00296b",
+        'spine': "#386641",
+        'leaf': "#7cb518",
+        'server': "#ffb4a2",
+        'virtual': "#ffb4a2",
         "stroke": "#6c757d",
-        highlightLinkStroke: "blue"
+        highlightLinkStroke: "#01161e"
     },
     opacityFill: {
         'core': "#2ca02c80",

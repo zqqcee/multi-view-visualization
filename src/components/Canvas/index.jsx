@@ -22,9 +22,7 @@ let ifFirstHighlight = true // 是否是第一次进入高亮
 //BUG :这个mode为什么不能定义在组件内部
 let mode
 
-//TODO: 节点拖拽(已尝试)
-//TODO: 自动缩放（已尝试）
-//TODO: bubbleSet
+
 
 //FIXME: 图例
 //FIXME: 节点搜索功能（新页面）
@@ -55,7 +53,6 @@ export default function Canvas() {
 
     //FIXME:更换数据集后，高亮的节点清空
     //FIXME:更换数据集重新执行initCanvas
-    //TODO: 高亮模式换数据
     useEffect(() => {
         needToHighLightNodeIp = new Set() // 记录全局的需要高亮的节点
         needToHighLightLink = []

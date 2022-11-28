@@ -1,11 +1,11 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react'
+import React, { useEffect, useLayoutEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { dataSets } from '../../utils/getData'
 import { hierarchyData } from "../../utils/handleData";
 import * as d3 from "d3"
 import "./index.css"
-import AreaInfo from './AreaInfo';
 import { changeAreaInfo, changeDrawInfo } from "../../redux/bubbleSlice"
+import AreaInfo from './AreaInfo';
 
 export default function Bubble() {
     const dataName = useSelector(state => state.option.dataName)
@@ -19,7 +19,8 @@ export default function Bubble() {
 
 
     useEffect(() => {
-        d3.select('#bubbleContainer').select('*').remove()
+        d3.select('#svgContainer').select('*').remove()
+        d3.select('#svgContainer').remove()
         initSvg()
         draw(hierarchicalData, d3.select('#svg'))
     }, [dataName, hierarchicalData])

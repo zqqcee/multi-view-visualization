@@ -1,16 +1,22 @@
 .datainfo {
     position: absolute;
-    /* background-color: pink; */
-    width: auto;
-    margin-left: 225px;
-    margin-top: 7px;
-    font-size: 20px;
+    background-color: white;
+    border: 1px solid black;
+    width: 180px;
+    /* margin-left: 225px; */
+    margin-top: 260px;
+    right: 10px;
+    font-size: 16px;
+}
+
+.highlightinfo {
+    margin-top: 20px;
 }
 
 .highlighttext {
     color: brown;
     font-weight: bold;
-    font-size: 25px;
+    /* font-size: 20px; */
 }
 
 .alarmingInfo {
@@ -38,4 +44,5 @@
     margin-left: 10px;
     position: relative;
     top: -3px;
+    width: 150px;
 }

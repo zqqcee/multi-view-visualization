@@ -1,0 +1,8 @@
+.searchLabel {
+    padding-left: 40px;
+    text-align: left;
+    font-size: 17px;
+    color: rgb(0, 0, 0);
+    display: inline-flex;
+    margin-top: 10px;
+}

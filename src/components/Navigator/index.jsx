@@ -27,16 +27,16 @@ export default function Navigator() {
         <div>
             <Menu mode="horizontal" selectedKeys={[current]} onClick={handleRouterChange} >
                 <Menu.Item key="homepage" >
-                    <Link to="/homepage" children="home" />
+                    <Link to="/homepage" children="数据统计" />
                 </Menu.Item>
                 <Menu.Item key="overview" >
-                    <Link to="/overview" children="overview" />
+                    <Link to="/overview" children="数据总览" />
                 </Menu.Item>
                 <Menu.Item key="searchview" >
-                    <Link to="/searchview" children="search" />
+                    <Link to="/searchview" children="检索视图" />
                 </Menu.Item>
                 <Menu.Item key="bubblesetview" >
-                    <Link to="/bubblesetview" children="bubbleset" />
+                    <Link to="/bubblesetview" children="多视图协同" />
                 </Menu.Item>
             </Menu>
         </div>

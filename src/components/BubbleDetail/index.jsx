@@ -188,7 +188,6 @@ export default function BubbleDetail() {
             return d.is_alarming ? SETTING.size.symbolSize * 3 : SETTING.size.symbolSize
         }
 
-        //TODO: 告警节点
         let nodeSymbol = nodeG
             .append('path')
             .attr('d', d3.symbol().type(getShape).size(getSize))

@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect } from 'react'
-import {  useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { dataSets } from '../../utils/getData'
 import { handleData } from "../../utils/handleData"
 import { SETTING } from './constant'
@@ -16,7 +16,9 @@ export default function SearchSvg() {
     const data = handleData(datasource)
 
     const searchIps = useSelector(state => state.searchInfo.value)
-
+    const twoHopFlag = useSelector(state => state.searchInfo.twoHopFlag)
+    const highlightFlag = useSelector(state => state.searchInfo.highlightFlag)
+    console.log(highlightFlag);
 
     useEffect(() => {
         if (!searchIps) {
@@ -29,16 +31,24 @@ export default function SearchSvg() {
         if (datum.nodes.length) {
             drawLayout(datum)
         }
-        highlightCircle(searchIps);
-
 
         //FIXME: return会导致第二次检索画布上没有节点
         // return (() => {
         //     cleanSvg();
         //     dispatch(search({ value: "" }))
         // })
+    }, [searchIps, twoHopFlag])
 
-    }, [searchIps])
+
+    useEffect(() => {
+        if (highlightFlag) {
+            highlightCircle(searchIps);
+        } else {
+            cancelHighlightCircle()
+        }
+    }, [highlightFlag])
+
+
 
     /**
      * @param zoomObj: 绑定的d3.zoom()对象
@@ -145,25 +155,7 @@ export default function SearchSvg() {
                 nodesSet.add(link.source)
                 nodesSet.add(link.target)
                 linksSet.add(link)
-                let curSrcIp = link.source.mgmt_ip
-                let curDstIp = link.target.mgmt_ip
-                links.forEach(link => {
-                    if (link.src_ip === curSrcIp || link.dst_ip === curSrcIp || link.src_ip === curDstIp || link.dst_ip === curDstIp) {
-                        nodesSet.add(link.source)
-                        nodesSet.add(link.target)
-                        linksSet.add(link)
-                    }
-                })
-            }
-        })
-
-        //secondIp，添加之前要判断是否存在第二个ip
-        if (secondIp) {
-            links.forEach(link => {
-                if (link.src_ip === secondIp || link.dst_ip === secondIp) {
-                    nodesSet.add(link.source)
-                    nodesSet.add(link.target)
-                    linksSet.add(link)
+                if (twoHopFlag) {
                     let curSrcIp = link.source.mgmt_ip
                     let curDstIp = link.target.mgmt_ip
                     links.forEach(link => {
@@ -174,10 +166,33 @@ export default function SearchSvg() {
                         }
                     })
                 }
+
+            }
+        })
+
+        //secondIp，添加之前要判断是否存在第二个ip
+        if (secondIp) {
+            links.forEach(link => {
+                if (link.src_ip === secondIp || link.dst_ip === secondIp) {
+                    nodesSet.add(link.source)
+                    nodesSet.add(link.target)
+                    linksSet.add(link)
+                    if (twoHopFlag) {
+                        let curSrcIp = link.source.mgmt_ip
+                        let curDstIp = link.target.mgmt_ip
+                        links.forEach(link => {
+                            if (link.src_ip === curSrcIp || link.dst_ip === curSrcIp || link.src_ip === curDstIp || link.dst_ip === curDstIp) {
+                                nodesSet.add(link.source)
+                                nodesSet.add(link.target)
+                                linksSet.add(link)
+                            }
+                        })
+                    }
+
+                }
             })
         }
 
-        console.log({ nodes: Array.from(nodesSet), links: Array.from(linksSet) });
         return { nodes: Array.from(nodesSet), links: Array.from(linksSet) }
 
     }
@@ -225,6 +240,10 @@ export default function SearchSvg() {
                 }
             });
         }
+
+
+
+
 
         let nodeCircle = nodeG
             .append('circle')
@@ -285,9 +304,12 @@ export default function SearchSvg() {
             if (!ip) {
                 return
             }
-            console.log(ip);
-            d3.select(`#ip_${ip.replaceAll('.', "")}`).attr('class', 'bling')
+            d3.select(`#ip_${ip.replaceAll('.', "")}`).attr('class', 'bling').attr('r', SETTING.size.nodeRadius + 2)
         })
+    }
+
+    const cancelHighlightCircle = () => {
+        d3.select('#scontainer').selectAll('circle').attr('class', '').attr('r', SETTING.size.nodeRadius)
     }
 
     return (

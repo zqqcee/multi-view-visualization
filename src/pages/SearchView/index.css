@@ -3,3 +3,13 @@
     right: 0;
     top: 219px;
 }
+
+.searchdetail {
+    width: 15%;
+    height: 400px;
+    /* background-color: pink; */
+    border: 1px solid black;
+    position: absolute;
+    top: 219px;
+    left: 0;
+}

@@ -4,6 +4,7 @@ import UserSearch from '../../components/UserSearch';
 import Legend from '../../components/Legend';
 import "./index.css"
 import { useSelector } from 'react-redux';
+import SearchDetail from '../../components/SearchDetail';
 
 export default function SearchView() {
 
@@ -20,9 +21,21 @@ export default function SearchView() {
     }
   }
 
+  const renderDetail = () => {
+    if (searchIps) {
+      console.log();
+      return (
+        <div className='searchdetail'>
+          <SearchDetail />
+        </div>
+      )
+    }
+  }
+
   return (
     <div>
       <UserSearch />
+      {renderDetail()}
       <SearchSvg />
       {renderLegend(searchIps)}
     </div>

@@ -11,7 +11,6 @@ export default function BubbleDetailLegend() {
     const data = dataSets[dataName]
     const legendList = getLegendInfo(data)
 
-    //TODO legend
 
     useEffect(() => {
         const height = document.querySelector('#bubbleDetailLegendContainer').clientHeight
@@ -20,10 +19,7 @@ export default function BubbleDetailLegend() {
         const circleOffset = 20
         const textOffset = 25
         const marginLeft = 20
-        const normalRadius = 6
-        const alarmingRadius = 9
-        const lineMarginLeft = 8
-        const lineWidth = 20
+
 
 
         d3.select('#bubbleDetailLegendContainer').select('*').remove()

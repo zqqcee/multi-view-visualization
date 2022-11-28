@@ -8,7 +8,6 @@ import Navigator from './components/Navigator'
 
 export default function App() {
 
-    //TODO:route
 
 
     return (
@@ -16,7 +15,6 @@ export default function App() {
             <Header />
             <SwitchBar />
             <Navigator />
-
             {useRoutes(routesEle)}
         </div>
     )

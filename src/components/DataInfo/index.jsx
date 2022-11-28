@@ -62,9 +62,9 @@ export default function DataInfo() {
                             //可用区
                             return (
                                 <Fragment>
-                                    <hr />
+                                    <hr key={`hr1${key}`} />
                                     <p key={key} className='azInfo'>{`${key}设备数量: ${value}`}</p>
-                                    <hr />
+                                    <hr key={`hr2${key}`} />
                                 </Fragment>
                             )
                         }
@@ -78,23 +78,23 @@ export default function DataInfo() {
 
     return (
         <div className='datainfo'>
-            已选择节点数量:<span className={highlightNodeNum === 0 ? null : 'highlighttext'}>{highlightNodeNum} </span>
-            已选择连边数量:<span className={highlightLinkNum === 0 ? null : 'highlighttext'}>{highlightLinkNum}</span>
+            高亮节点:<span className={highlightNodeNum === 0 ? null : 'highlighttext'}>{highlightNodeNum} </span><br />
+            高亮连边:<span className={highlightLinkNum === 0 ? null : 'highlighttext'}>{highlightLinkNum}</span><br />
 
+            <div className='highlightinfo'>
+                <Popover content={nodesContent} title="节点角色与告警详情" trigger="hover" placement='bottomLeft'>
+                    <Button className='btn' style={{ display: highlightNodeNum !== 0 ? 'block' : 'none' }}>角色详情</Button>
+                </Popover><br />
 
-            <Popover content={nodesContent} title="节点角色与告警详情" trigger="hover" placement='bottomLeft'>
-                <Button className='btn' style={{ display: highlightNodeNum !== 0 ? 'inline' : 'none' }}>角色详情(Hover me)</Button>
-            </Popover>
+                <Popover content={areaContent} title="区域信息详情" trigger="hover" placement='bottomLeft'>
+                    <Button className='btn' style={{ display: highlightNodeNum !== 0 ? 'block' : 'none' }}>区域详情</Button>
+                </Popover><br />
 
-            <Popover content={areaContent} title="区域信息详情" trigger="hover" placement='bottomLeft'>
-                <Button className='btn' style={{ display: highlightNodeNum !== 0 ? 'inline' : 'none' }}>区域详情(Hover me)</Button>
-            </Popover>
+                <Popover content={linksContent} title="连边种类与告警详情" trigger="hover" placement='bottomLeft'>
+                    <Button className='btn' style={{ display: highlightLinkNum !== 0 ? 'block' : 'none' }}>连边详情</Button>
+                </Popover><br />
 
-            <Popover content={linksContent} title="连边种类与告警详情" trigger="hover" placement='bottomLeft'>
-                <Button className='btn' style={{ display: highlightLinkNum !== 0 ? 'inline' : 'none' }}>连边详情(Hover me)</Button>
-            </Popover>
-
-
+            </div>
 
         </div >
     )
