@@ -6,6 +6,7 @@ import * as d3 from "d3"
 import "./index.css"
 import { changeAreaInfo, changeDrawInfo } from "../../redux/bubbleSlice"
 import AreaInfo from './AreaInfo';
+import AreaNodeLink from './AreaNodeLink';
 
 export default function Bubble() {
     const dataName = useSelector(state => state.option.dataName)
@@ -27,7 +28,6 @@ export default function Bubble() {
 
 
     const initSvg = () => {
-
         const width = document.querySelector('#bubbleContainer').clientWidth
         const height = document.querySelector('#bubbleContainer').clientHeight
         const svgContainer = d3.select('#bubbleContainer').append('svg')
@@ -138,8 +138,11 @@ export default function Bubble() {
 
 
     return (
-        <div className='bubbleContainer' id='bubbleContainer'>
+        <div className='allContainer' >
+            <div className='bubbleContainer' id='bubbleContainer' />
+            <AreaNodeLink />
             <AreaInfo />
         </div>
+
     )
 }

@@ -104,3 +104,57 @@ export const getLinksByNodes = (data, nodes) => {
     return { nodes, links }
 
 }
+
+
+/**
+ * 根据数据集获取AZ与POD的连边
+ * {
+ *  {nodes:[name:az1,nodes:[],links:[] ],  links:[source,target]}
+ * }
+ */
+export const getAreaLink = (data) => {
+    const { links } = handleData(data);
+    let res = { nodes: [], links: [] }
+    links.forEach(link => {
+
+        if (link.source.az !== link.target.az) {
+            //两个az不相等
+            let source = { name: link.source.az, nodes: [], links: [] }
+            let target = { name: link.target.az, nodes: [], links: [] }
+
+            if (!res.nodes.find(d => d.name === source.name)) {
+                res.nodes.push(source)
+            }
+            if (!res.nodes.find(d => d.name === target.name)) {
+                res.nodes.push(target)
+            }
+            if (!((res.links.find(d => d.source === source.name) && res.links.find(d => d.target === target.name)) ||
+                (res.links.find(d => d.target === source.name) && res.links.find(d => d.source === target.name)))) {
+                res.links.push({ source: source.name, target: target.name })
+            }
+        } else if (link.source.pod_name !== link.target.pod_name) {
+            //两个az相等，但是pod不相等
+
+            if (!res.nodes.find(d => d.name === link.source.az)) {
+                //az还不存在
+                res.nodes.push({ name: link.source.az, nodes: [], links: [] })
+            }
+            let curAz = res.nodes.find(d => d.name === link.source.az)
+
+            if (!curAz.nodes.find(d => d.name === link.source.pod_name)) {
+                curAz.nodes.push({ name: link.source.pod_name })
+            }
+            if (!curAz.nodes.find(d => d.name === link.target.pod_name)) {
+                curAz.nodes.push({ name: link.target.pod_name })
+            }
+
+            if (!((curAz.links.find(d => d.source === link.source.pod_name) && curAz.links.find(d => d.target === link.target.pod_name)) || (curAz.links.find(d => d.target === link.source.pod_name) && curAz.links.find(d => d.source === link.target.pod_name)))) {
+                curAz.links.push({ source: link.source.pod_name, target: link.target.pod_name })
+            }
+        }
+
+    })
+
+    return res
+
+}

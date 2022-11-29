@@ -6,17 +6,20 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getDataOption } from '../../utils/getOptions';
 import { changedata, changemode } from '../../redux/optionSlice';
 import { HIGHLIGHT, FOCUS } from '../../redux/constant';
+import { changeAreaInfo, changeDrawInfo } from "../../redux/bubbleSlice"
 const { Option, OptGroup } = Select;
 
 //这个option的value也是dataname，在传给reducer的时候需要用datasets[value]来传
 const dataOption = getDataOption(dataSets)
-console.log(dataOption);
 export default function SwitchBar() {
     const modeFlag = useSelector(state => state.modeFlag.flag)
     const mode = useSelector(state => state.option.mode)
     const dispatch = useDispatch();
     const handleChangeData = (dataname) => {
         dispatch(changedata(dataname))
+        dispatch(changeAreaInfo({ areaInfo: '' }))
+        dispatch(changeDrawInfo({ drawInfo: {} }))
+
     }
     const handleChangeMode = (mode) => {
         let dispatchMode

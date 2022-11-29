@@ -1,10 +1,14 @@
 .bubbleContainer {
-    width: 40%;
-    height: 800px;
+    width: 30%;
+    height: 300px;
     float: left;
     /* background-color: pink; */
-    /* position: fixed; */
     left: 0;
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+    border-top: 1px solid black;
+    border-left: 1px solid black;
+
 }
 
 .alarmingBubble {

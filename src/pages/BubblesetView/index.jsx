@@ -8,7 +8,6 @@ export default function BubblesetView() {
         <div >
             <Bubble />
             <BubbleDetail />
-            
         </div>
     )
 }

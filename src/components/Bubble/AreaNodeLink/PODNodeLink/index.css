@@ -1,0 +1,10 @@
+.podnodelinkContainer {
+    width: 50%;
+    height: 300px;
+    /* background-color: pink; */
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+    margin-left: 50%;
+    position: absolute;
+    top:0
+}
