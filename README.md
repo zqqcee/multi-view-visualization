@@ -159,3 +159,7 @@ export default function generate() {
 ```FIXME(2022-11-23)```搜索界面新增画布自动放缩功能
 
 ![屏幕录制2022-11-23 下午5.42.28](https://raw.githubusercontent.com/zqqcee/img_repo/main/img/202211231743004.gif)
+
+```FIXME(2022-11-29``` Bubble Set 多视图协同
+
+![屏幕录制2022-11-29 上午10.49.13](https://raw.githubusercontent.com/zqqcee/img_repo/main/img/202211291053618.gif)
