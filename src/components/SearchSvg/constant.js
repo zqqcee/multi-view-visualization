@@ -6,11 +6,11 @@ export const SETTING = {
         highlightLinkStrokeWidth: 1
     },
     fill: {
-        'core': "#00296b",
-        'spine': "#386641",
-        'leaf': "#7cb518",
-        'server': "#ffb4a2",
-        'virtual': "#ffb4a2",
+        'core': "#3f6600",
+        'spine': "#002c8c",
+        'leaf': "#91caff",
+        'server': "#08979c",
+        'virtual': "#08979c",
         "stroke": "#6c757d",
         highlightLinkStroke: "blue"
     },

@@ -4,7 +4,7 @@ import "./index.css"
 export default function Header() {
     return (
         <div className='header'>
-            网络大脑数据浏览平台
+            <h2>网络大脑数据浏览平台</h2>
         </div>
     )
 }

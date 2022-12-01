@@ -26,8 +26,7 @@ export default function UserSelection() {
 
     /**Role Tree  Component default setting  */
     const [roleCheckedKeys, setRoleCheckedKeys] = useState(); //选中的角色
-
-
+    
     /**Link Tree  Component default setting  */
     const [linkCheckedKeys, setLinkCheckedKeys] = useState(); //选中的角色
 
@@ -69,46 +68,53 @@ export default function UserSelection() {
 
     return (
         <div className='selection'>
-            <div className='areaSelection'>
-                <span className='spanLabel'>区域选择</span>
-                <Tree
-                    style={{ marginTop: '10px' }}
-                    checkable
-                    onExpand={areaOnExpand}
-                    expandedKeys={areaExpandedKeys}
-                    autoExpandParent={true}
-                    onCheck={areaOnCheck}
-                    checkedKeys={areaCheckedKeys}
-                    treeData={areaSelection}
-                />
-            </div>
-
-
-            <div className='roleSelection'>
-                <span className='spanLabel'>角色选择</span>
-                <Tree
-                    style={{ marginTop: '10px' }}
-                    checkable
-                    onCheck={roleOnCheck}
-                    checkedKeys={roleCheckedKeys}
-                    treeData={roleSelection}
-                />
-            </div>
-
-
-
-            <div className='linkSelection'>
-                <span className='spanLabel'>连边类型选择</span>
-                <Tree
-                    style={{ marginTop: '10px' }}
-                    checkable
-                    onCheck={linkOnCheck}
-                    checkedKeys={linkCheckedKeys}
-                    treeData={linkSelection}
-                />
-            </div>
-
-
+          <div className="title">
+            自定义选择
+          </div>
+          <div className="content">
+            <ul className="list">
+              
+              <li className="item">
+                <div className='areaSelection'>
+                  <span className='spanLabel'>区域选择</span>
+                  <Tree
+                      style={{ marginTop: '10px' }}
+                      checkable
+                      onExpand={areaOnExpand}
+                      expandedKeys={areaExpandedKeys}
+                      autoExpandParent={true}
+                      onCheck={areaOnCheck}
+                      checkedKeys={areaCheckedKeys}
+                      treeData={areaSelection}
+                  />
+                </div>
+              </li>
+              <li className="item">
+                <div className='roleSelection'>
+                  <span className='spanLabel'>角色选择</span>
+                  <Tree
+                      style={{ marginTop: '10px' }}
+                      checkable
+                      onCheck={roleOnCheck}
+                      checkedKeys={roleCheckedKeys}
+                      treeData={roleSelection}
+                  />
+                </div>
+              </li>
+              <li className="item">
+                <div className='linkSelection'>
+                    <span className='spanLabel'>连边类型选择</span>
+                    <Tree
+                        style={{ marginTop: '10px' }}
+                        checkable
+                        onCheck={linkOnCheck}
+                        checkedKeys={linkCheckedKeys}
+                        treeData={linkSelection}
+                    />
+                </div>
+              </li>
+            </ul>
+          </div>
         </div>
     )
 }
