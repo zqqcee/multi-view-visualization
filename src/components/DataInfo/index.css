@@ -1,48 +1,49 @@
-* {
-  padding: 0;
-  /* margin: 0; */
-}
 
 .datainfo {
   position: absolute;
-  right: 11px;
-  top: 413px;
-  width: 200px;
-  font-size: 16px;
-  padding: 10px 20px 10px 20px;
-  border-radius: 20px;
+  right: 0.5vw;
+  top: 30vh;
+  height: 25vh;
+  width: 9vw;
+  padding: 0 0.5vw 0 0.5vw;
+  border-radius: 1vh;
   background-color: white;
-  box-shadow: 0px 0px 20px #cdcfcf;
+  box-shadow: 0 0 1vh #cdcfcf;
 }
 
 .datainfo .title {
-  width: 80px;
-  height: 20px;
-  line-height: 20px;
-  font-size: 20px;
-  font-weight: bold;
-  text-align: center;
+  width: 6vw;
+  height: 5vh;
   margin: 0 auto;
+  border-bottom: 3px solid #ccc;
+  line-height: 5vh;
+  text-align: center;
+  font-size: 2vh;
+  font-weight: bold;
   /* background-color: pink; */
 }
 
 .datainfo .info {
-  border-top: 3px solid #ccc;
-  margin: 10px 0px 0px 0px;
-  padding-top: 5px;
+  /* background-color: pink; */
+  margin: 1vh auto;
+  width: 6vw;
 }
 
 .datainfo .commonInfo {
-  width: 120px;
-  height: 70px;
-  padding: 1px;
-  margin: 10px auto;
+  font-size: 1.5vh;
   text-align: center;
-  line-height: 30px;
+  line-height: 3vh;
+/* background-color: blue; */
 }
 
 .datainfo .highlightinfo {
-  margin-top: 50px;
+  margin-top: 3vh;
+  height: 10vh;
+  /* background-color: red; */
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
 }
 
 .highlighttext {
@@ -57,12 +58,12 @@
 
 .azInfo {
   font-weight: bold;
-  font-size: 15px;
+  font-size: 1.5vh;
 }
 
 .tooltip {
   width: auto;
-  height: 300px;
+  height: 20vh;
   overflow-y: scroll;
 }
 
@@ -71,9 +72,6 @@
 }
 
 .btn {
-  margin-top: -10px !important;
-  margin-left: 10px;
   position: relative;
-  top: -3px;
-  width: 150px;
+  width: 5vw;
 }

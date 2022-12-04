@@ -4,15 +4,18 @@
     /* margin-left: 222px; */
     /* margin-right: 20px; */
     /* margin-top: 20px; */
-    width: auto;
-    height: 1000px;
+    /* width: auto; */
+    /* height: 1000px; */
     /* overflow: scroll; */
+  height: 85vh;
+  width: 87vw;
+  transform: translateX(11vw);
 }
 
 .canvasBox {
-    margin-left: 222px;
+    /* margin-left: 222px;
     margin-right: 20px;
-    margin-top: 4px;
+    margin-top: 4px; */
 
 }
 

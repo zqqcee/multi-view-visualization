@@ -73,10 +73,11 @@ export default function UserSelection() {
           </div>
           <div className="content">
             <ul className="list">
-              
               <li className="item">
                 <div className='areaSelection'>
-                  <span className='spanLabel'>区域选择</span>
+                  <div className="selectionLabel">
+                    区域选择
+                  </div>
                   <Tree
                       style={{ marginTop: '10px' }}
                       checkable
@@ -91,7 +92,9 @@ export default function UserSelection() {
               </li>
               <li className="item">
                 <div className='roleSelection'>
-                  <span className='spanLabel'>角色选择</span>
+                  <div className="selectionLabel">
+                    角色选择
+                  </div>
                   <Tree
                       style={{ marginTop: '10px' }}
                       checkable
@@ -103,7 +106,9 @@ export default function UserSelection() {
               </li>
               <li className="item">
                 <div className='linkSelection'>
-                    <span className='spanLabel'>连边类型选择</span>
+                <div className="selectionLabel">
+                    连边类型选择
+                  </div>
                     <Tree
                         style={{ marginTop: '10px' }}
                         checkable

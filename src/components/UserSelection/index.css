@@ -5,65 +5,79 @@
 .selection {
   position: absolute;
   left: 0;
-  top: 147px;
-  min-height: 850px;
-  width: 220px;
-  padding: 10px;
-  border-top-left-radius: 0px;
-  border-top-right-radius: 20px;
-  border-bottom-right-radius: 20px;
-  border-bottom-left-radius: 0px;
+  top: 5vh;
+  /* min-height: 850px; */
+  height: 86vh;
+  width: 11vw;
+  padding: 1vh 0.5vw 1vh 0.5vw;
+  border-top-left-radius: 0vh;
+  border-top-right-radius: 1vh;
+  border-bottom-right-radius: 1vh;
+  border-bottom-left-radius: 1vh;
   box-sizing: border-box;
   z-index: 999;
   background-color: white;
-  box-shadow: 0px 10px 20px #cdcfcf;
+  box-shadow: 0vh 0.5vh 1vh #cdcfcf;
   scrollbar-width: none;
-
+  /* background-color: pink; */
 }
 
 .selection .title {
-  height: 70px;
-  width: 190px;
-  border-bottom: 3px solid #ccc;
-  margin-bottom: 10px;
+  /* background-color: red; */
+  height: 6vh;
+  width: 8vw;
+  border-bottom: 0.3vh solid #ccc;
+  margin: 0 auto;
   text-align: center;
-  font-size: 26px;
+  font-size: 2.5vh;
   font-weight: bold;
-  line-height: 70px;
+  line-height: 6vh;
 }
 
 .selection .content {
-  min-height: 700px;
+  height: 78vh;
+  width: 10vw;
 }
 
 .selection .content ul.list {
+  height: 100%;
+  width: 100%;
+  padding: 0.5vw;
   list-style-type: none;
+  /* background-color: blue; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 .selection .content li.item {
-  padding-top: 15px;
-  overflow-y: scroll;
+  width: 9vw;
 }
-
-.areaSelection {
-  height: 230px;
-}
-
-.roleSelection {
-  height: 175px;
-}
-
-.linkSelection {
-  height: 300px;
-}
-
-.selection span.spanLabel {
-  display: block;
-  width: 100px;
-  height: 24px;
-  text-align: center;
-  line-height: 30px;
-  font-weight: bold;
-  font-size: medium;
+li.item .selectionLabel {
+  width: 8vw;
+  height: 4vh;
   margin: 0 auto;
+  text-align: center;
+  line-height: 4vh;
+  /* background-color: red; */
+  font-size: 2vh;
+  color: black;
+  font-weight: bold;
+}
+
+.ant-tree {
+  overflow-y: scroll;
+  font-size: 1.5vh;
+}
+.areaSelection .ant-tree{
+  height: 18vh;
+}
+
+.roleSelection .ant-tree{
+  height: 13vh;
+}
+
+.linkSelection .ant-tree{
+  height: 23vh;
 }

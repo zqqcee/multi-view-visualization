@@ -1,3 +1,10 @@
+.allContainer {
+  /* background-color: red; */
+  height: 86vh;
+  background-color: white;
+  box-shadow: 0vh 0.5vh 1vh #cdcfcf;
+  scrollbar-width: none;
+}
 .bubbleContainer {
     width: 30%;
     height: 300px;

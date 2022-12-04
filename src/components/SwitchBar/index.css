@@ -1,7 +1,9 @@
 .switchbar {
-    height: 40px;
+    height: 5vh;
     width: 100%;
     /* background-color: pink; */
+    box-shadow: 0 0vh 0.5vh #ccc;
+    line-height: 4vh;
 }
 
 .switch-label {
