@@ -1,40 +1,83 @@
+* {
+  padding: 0;
+}
+
 .selection {
-    height: auto;
-    width: 200px;
-    float: left;
-    /* background-color: pink; */
+  position: absolute;
+  left: 0;
+  top: 5vh;
+  /* min-height: 850px; */
+  height: 86vh;
+  width: 11vw;
+  padding: 1vh 0.5vw 1vh 0.5vw;
+  border-top-left-radius: 0vh;
+  border-top-right-radius: 1vh;
+  border-bottom-right-radius: 1vh;
+  border-bottom-left-radius: 1vh;
+  box-sizing: border-box;
+  z-index: 999;
+  background-color: white;
+  box-shadow: 0vh 0.5vh 1vh #cdcfcf;
+  scrollbar-width: none;
+  /* background-color: pink; */
 }
 
-
-
-.areaSelection {
-    margin-top: 20px;
-    height: 250px;
-    width: auto;
-    overflow-y: scroll;
-    border: 1px solid black;
+.selection .title {
+  /* background-color: red; */
+  height: 6vh;
+  width: 8vw;
+  border-bottom: 0.3vh solid #ccc;
+  margin: 0 auto;
+  text-align: center;
+  font-size: 2.5vh;
+  font-weight: bold;
+  line-height: 6vh;
 }
 
-.roleSelection {
-    margin-top: 0px;
-    height: 200px;
-    width: auto;
-    overflow-y: scroll;
-    border: 1px solid black;
-    border-top: 0px;
+.selection .content {
+  height: 78vh;
+  width: 10vw;
 }
 
-.linkSelection {
-    margin-top: 0px;
-    height: 300px;
-    width: auto;
-    overflow-y: scroll;
-    border: 1px solid black;
-    border-top: 0px;
+.selection .content ul.list {
+  height: 100%;
+  width: 100%;
+  padding: 0.5vw;
+  list-style-type: none;
+  /* background-color: blue; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
-.spanLabel {
-    margin-left: 5px;
-    font-size: 15px;
-    color: rgb(0, 0, 0);
+.selection .content li.item {
+  width: 9vw;
+}
+li.item .selectionLabel {
+  width: 8vw;
+  height: 4vh;
+  margin: 0 auto;
+  text-align: center;
+  line-height: 4vh;
+  /* background-color: red; */
+  font-size: 2vh;
+  color: black;
+  font-weight: bold;
+}
+
+.ant-tree {
+  overflow-y: scroll;
+  font-size: 1.5vh;
+}
+.areaSelection .ant-tree{
+  height: 18vh;
+}
+
+.roleSelection .ant-tree{
+  height: 13vh;
+}
+
+.linkSelection .ant-tree{
+  height: 23vh;
 }

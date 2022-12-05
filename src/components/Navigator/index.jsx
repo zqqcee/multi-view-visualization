@@ -1,3 +1,11 @@
+/*
+ * @Author: mmy 15224924822@163.com
+ * @Date: 2022-12-01 15:47:47
+ * @LastEditors: mmy 15224924822@163.com
+ * @LastEditTime: 2022-12-02 13:27:55
+ * @FilePath: \dataviz\src\components\Navigator\index.jsx
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 import React, { useState } from 'react'
 import { Menu } from 'antd';
 import { Link } from 'react-router-dom'
@@ -5,7 +13,7 @@ import { changemode } from '../../redux/optionSlice';
 import { changeModeFlag } from '../../redux/modeFlagSlice';
 import { useDispatch } from 'react-redux';
 import { HIGHLIGHT } from '../../redux/constant';
-
+import './index.css';
 export default function Navigator() {
 
     const [current, setCurrent] = useState('homepage')
@@ -24,11 +32,10 @@ export default function Navigator() {
 
 
     return (
-        <div>
             <Menu mode="horizontal" selectedKeys={[current]} onClick={handleRouterChange} >
                 <Menu.Item key="homepage" >
-                    <Link to="/homepage" children="数据统计" />
-                </Menu.Item>
+                    <Link to="/homepage" children="数据统计" className="listItem"/>
+                </Menu.Item >
                 <Menu.Item key="overview" >
                     <Link to="/overview" children="数据总览" />
                 </Menu.Item>
@@ -39,6 +46,5 @@ export default function Navigator() {
                     <Link to="/bubblesetview" children="多视图协同" />
                 </Menu.Item>
             </Menu>
-        </div>
     )
 }

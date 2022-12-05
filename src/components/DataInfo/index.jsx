@@ -78,24 +78,27 @@ export default function DataInfo() {
 
     return (
         <div className='datainfo'>
-            高亮节点:<span className={highlightNodeNum === 0 ? null : 'highlighttext'}>{highlightNodeNum} </span><br />
-            高亮连边:<span className={highlightLinkNum === 0 ? null : 'highlighttext'}>{highlightLinkNum}</span><br />
+            <div className="title">数据信息</div>
+            <div className="info">
+              <div className="commonInfo">
+              高亮节点:<span className={highlightNodeNum === 0 ? null : 'highlighttext'}>{highlightNodeNum} </span><br />
+              高亮连边:<span className={highlightLinkNum === 0 ? null : 'highlighttext'}>{highlightLinkNum}</span><br />
+              </div>
 
-            <div className='highlightinfo'>
-                <Popover content={nodesContent} title="节点角色与告警详情" trigger="hover" placement='bottomLeft'>
-                    <Button className='btn' style={{ display: highlightNodeNum !== 0 ? 'block' : 'none' }}>角色详情</Button>
-                </Popover><br />
+              <div className='highlightinfo'>
+                  <Popover content={nodesContent} title="节点角色与告警详情" trigger="hover" placement='bottomLeft'>
+                      <Button className='btn' style={{ display: highlightNodeNum !== 0 ? 'block' : 'none' }}>角色详情</Button>
+                  </Popover><br />
 
-                <Popover content={areaContent} title="区域信息详情" trigger="hover" placement='bottomLeft'>
-                    <Button className='btn' style={{ display: highlightNodeNum !== 0 ? 'block' : 'none' }}>区域详情</Button>
-                </Popover><br />
+                  <Popover content={areaContent} title="区域信息详情" trigger="hover" placement='bottomLeft'>
+                      <Button className='btn' style={{ display: highlightNodeNum !== 0 ? 'block' : 'none' }}>区域详情</Button>
+                  </Popover><br />
 
-                <Popover content={linksContent} title="连边种类与告警详情" trigger="hover" placement='bottomLeft'>
-                    <Button className='btn' style={{ display: highlightLinkNum !== 0 ? 'block' : 'none' }}>连边详情</Button>
-                </Popover><br />
-
+                  <Popover content={linksContent} title="连边种类与告警详情" trigger="hover" placement='bottomLeft'>
+                      <Button className='btn' style={{ display: highlightLinkNum !== 0 ? 'block' : 'none' }}>连边详情</Button>
+                  </Popover><br />
+              </div>
             </div>
-
         </div >
     )
 }

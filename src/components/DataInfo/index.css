@@ -1,48 +1,77 @@
+
 .datainfo {
-    position: absolute;
-    background-color: white;
-    border: 1px solid black;
-    width: 180px;
-    /* margin-left: 225px; */
-    margin-top: 260px;
-    right: 10px;
-    font-size: 16px;
+  position: absolute;
+  right: 0.5vw;
+  top: 30vh;
+  height: 25vh;
+  width: 9vw;
+  padding: 0 0.5vw 0 0.5vw;
+  border-radius: 1vh;
+  background-color: white;
+  box-shadow: 0 0 1vh #cdcfcf;
 }
 
-.highlightinfo {
-    margin-top: 20px;
+.datainfo .title {
+  width: 6vw;
+  height: 5vh;
+  margin: 0 auto;
+  border-bottom: 3px solid #ccc;
+  line-height: 5vh;
+  text-align: center;
+  font-size: 2vh;
+  font-weight: bold;
+  /* background-color: pink; */
+}
+
+.datainfo .info {
+  /* background-color: pink; */
+  margin: 1vh auto;
+  width: 6vw;
+}
+
+.datainfo .commonInfo {
+  font-size: 1.5vh;
+  text-align: center;
+  line-height: 3vh;
+/* background-color: blue; */
+}
+
+.datainfo .highlightinfo {
+  margin-top: 3vh;
+  height: 10vh;
+  /* background-color: red; */
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
 }
 
 .highlighttext {
-    color: brown;
-    font-weight: bold;
-    /* font-size: 20px; */
+  color: brown;
+  font-weight: bold;
 }
 
 .alarmingInfo {
-    color: red;
-    font-weight: bold;
+  color: red;
+  font-weight: bold;
 }
 
 .azInfo {
-    font-weight: bold;
-    font-size: 15px;
+  font-weight: bold;
+  font-size: 1.5vh;
 }
 
 .tooltip {
-    width: auto;
-    height: 300px;
-    overflow-y: scroll;
+  width: auto;
+  height: 20vh;
+  overflow-y: scroll;
 }
 
 .nodetooltip {
-    height: auto !important
+  height: auto !important
 }
 
 .btn {
-    margin-top: -10px !important;
-    margin-left: 10px;
-    position: relative;
-    top: -3px;
-    width: 150px;
+  position: relative;
+  width: 5vw;
 }

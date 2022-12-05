@@ -5,11 +5,15 @@
 }
 
 .searchdetail {
-    width: 15%;
+    width: 18%;
     height: 400px;
     /* background-color: pink; */
-    border: 1px solid black;
+    /* border: 1px solid black; */
     position: absolute;
     top: 219px;
     left: 0;
+    padding: 0px 20px 0px 20px;
+    border-radius: 20px;
+    background-color: white;
+    box-shadow: 0px 0px 20px #cdcfcf;
 }

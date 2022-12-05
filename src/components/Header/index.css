@@ -1,10 +1,31 @@
+
 .header {
-    width: 100%;
-    height: 60px;
-    text-align: center;
-    color: rgb(0, 0, 0);
-    font-weight: bold;
-    font-size: 45px;
-    vertical-align: middle;
-    /* background-color: rgb(182, 129, 139); */
+  /* display: none; */
+  position: relative;
+  width: 98vw;
+  height: 6vh;
+  /* background-color: red; */
+  margin: 1vh auto;
+  border-radius: 1vh;
+  box-shadow: 0vw 0vh 1vh #ccc;
+  background-color: white;
+}
+
+.systemTitle {
+  position: absolute;
+  left: 1vw;
+  top: 0.5vh;
+  width: 30vw;
+  height: 5vh;
+  /* background-color: pink; */
+  text-align: center; line-height: 5vh;
+  font-size: 3vh;
+  font-weight: bold;
+}
+.routerLinkList {
+  position: absolute;
+  left: 38vw;
+  top: 0.5vh;
+  width: 50vw;
+  height: 5vh;
 }

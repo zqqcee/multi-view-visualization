@@ -1,0 +1,18 @@
+.routerLinkList ul{
+  /* width: 40vw; */
+  height: 5vh;
+  /* background-color: red; */
+  font-size: 2vh;
+}
+.routerLinkList li{
+  width: 7vw;
+  height: 5vh;
+  font-family: 'Times New Roman', Times, serif;
+  font-weight: bolder;
+  padding: 0.5vh;
+  text-align: center;
+  line-height: 5vh;
+}
+.ant-menu-horizontal {
+  border:0;
+}

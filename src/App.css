@@ -1,11 +1,26 @@
+*{
+  padding: 0;
+  margin: 0;
+}
 #root,
 body,
 html {
+    background-color: #f2f2f2;
     height: 100%;
+    width: 100%;
 }
 
 .ant-layout {
     display: flex;
     width: 100%;
     min-height: 100%;
+  }
+.mainBox{
+  position: relative;
+  width: 98vw;
+  height: 91vh;
+  background-color: white;
+  margin: 1vh auto;
+  border-radius: 1vh;
+  box-shadow: 0 0.5vh 1vh #ccc;
 }
