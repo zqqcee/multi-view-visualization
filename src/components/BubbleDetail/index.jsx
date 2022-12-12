@@ -2,10 +2,11 @@ import React, { useEffect, useLayoutEffect } from 'react'
 import "./index.css"
 import * as d3 from "d3"
 import { useSelector } from 'react-redux'
-import { SETTING } from "./constant"
+import { DBSCAN, FUZZYSEG, NORULES, SEG, SETTING } from "./constant"
 import { dataSets } from '../../utils/getData'
-import { handleData } from '../../utils/handleData'
+import { handleData, handleCutData } from '../../utils/handleData'
 import BubbleDetailLegend from './BubbleDetailLegend'
+import axios from 'axios'
 
 let simulation
 
@@ -120,6 +121,7 @@ export default function BubbleDetail() {
             links = data.links.filter(link => {
                 return (nodes.findIndex(node => node.mgmt_ip === link.src_ip) >= 0 && nodes.findIndex(node => node.mgmt_ip === link.dst_ip) >= 0)
             })
+
         } else {
             return
         }
@@ -157,7 +159,7 @@ export default function BubbleDetail() {
             .data(nodes)
             .join('g')
             .attr('class', 'nodeGroup')
-            .attr('id', d => `${d.mgmt_ip}_group`)
+            .attr('id', d => `${d.index}_group`)
 
 
         const fixNodes = (curNode) => {
@@ -244,11 +246,166 @@ export default function BubbleDetail() {
     }
 
 
+    //剪枝
+    const handleCut = (cutMode) => {
 
+        switch (cutMode) {
+            case NORULES:
+                console.log(cutMode);
+                break;
+            case FUZZYSEG:
+                axios.post('http://localhost:8080/aggregate', { nodes, links }).then(resp => {
+                    if (resp.data.code === 200) {
+                        d3.select('#bubblesvg').select('*').remove()
+                        const { groupList, groupLinks } = resp.data.obj;
+                        const { cutNodes, cutLinks } = handleCutData(groupList, groupLinks);
+                        drawCutData(cutNodes, cutLinks);
+                    }
+
+                }).catch(err => {
+                    return;
+                })
+                console.log(cutMode);
+                break;
+            case SEG:
+                console.log(cutMode);
+                break;
+            case DBSCAN:
+                console.log(cutMode);
+                break;
+            default:
+                //默认，clean，不剪枝
+                break;
+        }
+    }
+
+
+
+    const drawCutData = (nodes, links) => {
+
+        const svg = d3.select('#bubblesvg')
+        svg.select('*').remove()
+
+        if (!nodes.length) {
+            return;
+        }
+        const height = document.querySelector("#bubbleDetailContainer").clientHeight
+        const width = document.querySelector("#bubbleDetailContainer").clientWidth
+
+
+
+        //FIXME: 先添加link，再添加circle，可以保证连边在circle的下层
+        const linkLine = svg.append('g')
+            .attr('class', 'links')
+            .attr('id', 'links')
+            .selectAll('.linkG')
+            .data(links)
+            .join('line')
+            .attr('class', 'link')
+            .attr('stroke', d => SETTING.fill.stroke)
+            .attr('stroke-width', SETTING.size.linkStrokeWidth)
+
+
+        const nodeG = svg.append('g')
+            .attr('class', 'nodes')
+            .attr('id', 'nodes')
+            .selectAll('.nodeG')
+            .data(nodes)
+            .join('g')
+            .attr('class', 'nodeGroup')
+            .attr('id', d => `${d.index}_group`)
+
+
+
+
+        const getShape = (d) => {
+            if (d.hyperNode) {
+                return d3.symbolCircle
+            } else {
+                switch (d.children[0].role.toLowerCase()) {
+                    case "core":
+                        return d3.symbolStar;
+                    case "spine":
+                        return d3.symbolTriangle;
+                    case "leaf" || "tor":
+                        return d3.symbolCircle;
+                    default:
+                        return d3.symbolSquare
+                }
+            }
+
+        }
+
+        const getSize = (d) => {
+            if (d.hyperNode) {
+                return d.size *3
+            } else {
+                return d.children[0].is_alarming ? SETTING.size.symbolSize * 3 : SETTING.size.symbolSize
+            }
+        }
+
+        const getFill = (d) => {
+            if (d.hyperNode) {
+                return '#bcb8b180';
+            } else {
+                return d.children[0].is_alarming ? SETTING.fill.alarmingNode : SETTING.fill.normalNode
+            }
+
+        }
+
+        let nodeSymbol = nodeG
+            .append('path')
+            .attr('d', d3.symbol().type(getShape).size(getSize))
+            .attr('fill', getFill)
+            // .attr('storke', d => d.hyperNode? )
+            .call(
+                d3.drag()
+                    .on('start', event => {
+                        //d3.event.active代表的是除去当前事件，当前正在发生的拖动事件的个数。
+                        if (!event.active) simulation.alphaTarget(0.3).restart();
+                        event.subject.fx = event.subject.x;
+                        event.subject.fy = event.subject.y;
+                    })
+                    .on('drag', event => {
+                        event.subject.fx = event.x;
+                        event.subject.fy = event.y;
+                    })
+                    .on('end', event => {
+                        // simulation.alphaTarget(simulation.alphaMin() * 0.1).restart()
+                        simulation.alphaTarget(0.3).restart()
+                    })
+            );
+
+
+
+
+        simulation = d3.forceSimulation(nodes)
+            .force("charge", d3.forceManyBody().strength(-100))
+            .force("center", d3.forceCenter(width / 2, height / 2))
+            .force("collide", d3.forceCollide().radius(d => d.is_alarming ? SETTING.size.nodeRadius * 3 : SETTING.size.nodeRadius).strength(0.8))
+            //设定forceX与forceY使得它们更加聚拢在中间位置
+            //FIXME:调整了strength
+            .force("x", d3.forceX(width / 2).strength(0.1))
+            .force("y", d3.forceY(height / 2).strength(0.1))
+            .force("link", d3.forceLink(links).strength(0.5).distance(10))
+            .on("tick", () => {
+                linkLine.attr("x1", function (d) { return parseInt(d.source.x); })
+                    .attr("y1", function (d) { return parseInt(d.source.y); })
+                    .attr("x2", function (d) { return parseInt(d.target.x); })
+                    .attr("y2", function (d) { return parseInt(d.target.y); });
+                nodeSymbol.attr('transform', function (d) { return 'translate(' + d.x + ',' + d.y + ')' })
+            })
+
+    }
 
     return (
         <div className='bubbleDetailContainer' id="bubbleDetailContainer">
             <BubbleDetailLegend />
+            <button onClick={() => handleCut(FUZZYSEG)}>fuzzySEG</button>
+            <button onClick={() => handleCut(SEG)}>SEG</button>
+            <button onClick={() => handleCut(NORULES)}>alarming cut</button>
+            <button onClick={() => handleCut(DBSCAN)}>DBScan</button>
+
         </div>
     )
 }

@@ -54,6 +54,7 @@
 .selection .content li.item {
   width: 9vw;
 }
+
 li.item .selectionLabel {
   width: 8vw;
   height: 4vh;
@@ -70,14 +71,15 @@ li.item .selectionLabel {
   overflow-y: scroll;
   font-size: 1.5vh;
 }
-.areaSelection .ant-tree{
-  height: 18vh;
+
+.areaSelection .ant-tree {
+  height: 206px;
 }
 
-.roleSelection .ant-tree{
-  height: 13vh;
+.roleSelection .ant-tree {
+  height: 150px;
 }
 
-.linkSelection .ant-tree{
-  height: 23vh;
+.linkSelection .ant-tree {
+  height: 170px;
 }

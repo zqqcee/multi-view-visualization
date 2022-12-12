@@ -35,7 +35,12 @@ export const SETTING = {
     },
 
     dragMode: {
-        flag: true //默认不移动
+        flag: false //默认不移动
     }
 
-}
+};
+
+export const FUZZYSEG = 'fuzzyseg';
+export const SEG = 'seg';
+export const DBSCAN = 'dbscan';
+export const NORULES = 'norules';

@@ -16,6 +16,8 @@ export default function AZNodeLink() {
     const drawData = getAreaLink(data)
 
     const areaInfo = useSelector(state => state.bubble.areaInfo)
+    const drawInfo = useSelector(state => state.bubble.drawInfo)
+
 
     useEffect(() => {
         const container = d3.select('#aznodelinkContainer')
@@ -29,12 +31,12 @@ export default function AZNodeLink() {
 
     useEffect(() => {
         d3.select('#aznodelinkContainer').selectAll('circle').attr('class', '')
-        const az = areaInfo.split('_')[0]
+        const az = drawInfo.az
         if (!az) {
             return
         }
         d3.select('#aznodelinkContainer').select(`#${az}`).select('circle').attr('class', 'bling')
-    }, [areaInfo])
+    }, [drawInfo])
 
 
     const initSvg = () => {

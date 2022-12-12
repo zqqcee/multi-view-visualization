@@ -1,7 +1,7 @@
 .searchLegend {
     position: absolute;
     right: 0;
-    top: 219px;
+    top: 95px;
 }
 
 .searchdetail {
@@ -10,7 +10,7 @@
     /* background-color: pink; */
     /* border: 1px solid black; */
     position: absolute;
-    top: 219px;
+    top: 95px;
     left: 0;
     padding: 0px 20px 0px 20px;
     border-radius: 20px;

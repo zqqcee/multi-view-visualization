@@ -158,3 +158,25 @@ export const getAreaLink = (data) => {
     return res
 
 }
+
+
+/**
+ * 将后端返回的数据变成可以绘制的nodes，links 格式
+ */
+export const handleCutData = (groupList, groupLinks) => {
+    let cutNodes = []
+    let cutLinks = []
+
+
+    cutNodes = groupList.map(group => {
+        return { index: group.groupIndex, ...group }
+    })
+
+    cutLinks = groupLinks.map(grouplink => {
+        let source = cutNodes.find(node => node.index === grouplink.source);
+        let target = cutNodes.find(node => node.index === grouplink.target);
+        return { source, target }
+    })
+
+    return { cutNodes, cutLinks }
+}

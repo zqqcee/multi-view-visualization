@@ -3,7 +3,8 @@
   position: absolute;
   right: 0.5vw;
   top: 30vh;
-  height: 25vh;
+  height: 280px;
+  /* height: auto; */
   width: 9vw;
   padding: 0 0.5vw 0 0.5vw;
   border-radius: 1vh;
@@ -73,5 +74,6 @@
 
 .btn {
   position: relative;
-  width: 5vw;
+  width: 92px;
+  font-size: 1.5vh;
 }

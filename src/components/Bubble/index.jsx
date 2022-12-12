@@ -39,7 +39,7 @@ export default function Bubble() {
         const svg = svgContainer.append('g')
             .attr('id', 'svg')
             .attr('class', 'svg')
-            .attr('transform', 'translate(0,-10)')
+            .attr('transform', 'translate(0,0)')
 
         let zoomObj = d3.zoom()
             .scaleExtent([1 / 50, 2])
@@ -139,9 +139,11 @@ export default function Bubble() {
 
     return (
         <div className='allContainer' >
-            <div className='bubbleContainer' id='bubbleContainer' />
+            <div className='bubbleContainer' id='bubbleContainer' >
+                <AreaInfo />
+            </div>
             <AreaNodeLink />
-            <AreaInfo />
+
         </div>
 
     )

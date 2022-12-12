@@ -10,11 +10,6 @@ import structure3 from "../assets/struct3/struct3.json"
 import structure4 from "../assets/struct4/struct4.json"
 
 
-
-
-
-
-
 //等比缩放
 import small1 from "../assets/ratioscale/小规模数据1 511节点 402边 删除pod -6核心pod.json"
 import small2 from "../assets/ratioscale/小规模数据2 474节点 266边 删除pod -6核心pod.json"

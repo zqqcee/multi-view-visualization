@@ -21,12 +21,12 @@ export default function SearchDetail() {
     const secondNode = nodes.find(node => node.mgmt_ip === secondIp)
 
     return (
-        <div id="searchdetail" style={{ marginLeft: '10px' }}>
+        <div id="searchdetail" style={{ marginLeft: '10px', fontSize: '1.5vh' }}>
             {!firstNode ? null : (
                 <Fragment>
                     <h3 style={{ textAlign: 'center' }}>First Node</h3>
-                    <table >
-                        <tbody>
+                    <table>
+                        <tbody >
                             {Object.entries(firstNode).map(([key, value], i) => {
                                 if (i <= 5) {
                                     return (
@@ -48,7 +48,7 @@ export default function SearchDetail() {
             {!secondNode ? null : (
                 <Fragment>
                     <h3 style={{ textAlign: 'center' }}>Second Node</h3>
-                    <table>
+                    <table >
                         {Object.entries(secondNode).map(([key, value], i) => {
                             if (i <= 5) {
                                 return (
