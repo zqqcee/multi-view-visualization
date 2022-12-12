@@ -14,7 +14,7 @@ export default function SearchView() {
   const renderLegend = (searchIps) => {
     if (searchIps) {
       return (
-        <div className='searchLegend'>
+        <div className='searchLegend' style={{ top: ' 32px' }}>
           <Legend />
         </div>
       )

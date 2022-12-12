@@ -2,11 +2,10 @@ import React, { useEffect, useLayoutEffect } from 'react'
 import "./index.css"
 import * as d3 from "d3"
 import { useSelector } from 'react-redux'
-import { DBSCAN, FUZZYSEG, NORULES, ORIGIN, SEG, SETTING } from "./constant"
+import { DBSCAN, FUZZYSEG, NORULES, SEG, SETTING } from "./constant"
 import { dataSets } from '../../utils/getData'
 import { handleData, handleCutData } from '../../utils/handleData'
 import BubbleDetailLegend from './BubbleDetailLegend'
-import { Button } from 'antd';
 import axios from 'axios'
 
 let simulation
@@ -21,90 +20,89 @@ export default function BubbleDetail() {
     let links = []
 
 
-    /**
-     * 初始化画布
-     * svg:bubbleDetailsvgContainer
-     * g:bubblesvg
-     */
     useLayoutEffect(() => {
-        const initSvg = () => {
-            const width = document.querySelector('#bubbleDetailContainer').clientWidth
-            const height = document.querySelector('#bubbleDetailContainer').clientHeight
-            const svgContainer = d3.select('#bubbleDetailContainer').append('svg')
-                .attr('id', 'bubbleDetailsvgContainer')
-                .attr('class', 'bubbleDetailsvgContainer')
-                .attr('width', width - 100)
-                .attr('height', height - 100)
-
-            const svg = svgContainer.append('g')
-                .attr('id', 'bubblesvg')
-                .attr('class', 'bubblesvg')
-
-            let zoomObj = d3.zoom()
-                .scaleExtent([1 / 50, 2])
-
-            svgContainer.call(
-                zoomObj.on('zoom', e => {
-                    let { k, x, y } = e.transform;
-                    d3.select('#bubblesvg').style('transform', `translate(${x}px, ${y}px) scale(${k})`);
-                })
-                // zoomObj.on('zoom', e => {
-                //     svg.attr('transform', d3.zoomTransform(d3.select('#svgContainer').node()))
-                // })
-
-            )
-
-            document.onkeydown = (e) => {
-                if (e.keyCode === 17) {
-                    autoZoom(
-                        zoomObj,
-                        'bubbleDetailsvgContainer',
-                        'bubblesvg',
-                        {
-                            row: 30,
-                            col: 60
-                        },
-                        1000
-                    )
-                }
-
-            }
-
-        }
-        const autoZoom = (zoomObj, svgContainerId, svgBodyId, marginParam, duration) => {
-
-            const svgContainer = document.querySelector(`#${svgContainerId}`);
-            const svgBody = d3.select(`#${svgBodyId}`);
-
-            const viewBox = svgBody.node().getBBox();//g
-            //svg
-            const containerWidth = svgContainer.clientWidth
-            const containerHeight = svgContainer.clientHeight
-            // margin setting
-            const rowMargin = marginParam.row
-            const colMargin = marginParam.col
-
-            const scale = Math.min((containerWidth - rowMargin) / viewBox.width, (containerHeight - colMargin) / viewBox.height)
-
-            const offsetX = (containerWidth - rowMargin) / 2 - (viewBox.x + viewBox.width / 2) * scale
-            const offsetY = (containerHeight - colMargin) / 2 - (viewBox.y + viewBox.height / 2) * scale
-
-            // d3.zoomIdentity:缩放参数，返回Transform{k:1,x:0,y:0}
-            const t = d3.zoomIdentity.translate(offsetX + rowMargin / 2, offsetY + colMargin / 2).scale(scale)
-            d3.select(`#${svgContainerId}`).transition().duration(duration).call(zoomObj.transform, t)
-        }
         initSvg()
     }, [])
 
-
-    /**
-     * 当用户切换区域时，默认渲染一个不剪枝的视图
-     */
     useEffect(() => {
         d3.select('#bubblesvg').select('*').remove()
         getDrawData(drawInfo)
         drawLayout()
     }, [drawInfo])
+
+
+
+
+
+    const initSvg = () => {
+        const width = document.querySelector('#bubbleDetailContainer').clientWidth
+        const height = document.querySelector('#bubbleDetailContainer').clientHeight
+        const svgContainer = d3.select('#bubbleDetailContainer').append('svg')
+            .attr('id', 'bubbleDetailsvgContainer')
+            .attr('class', 'bubbleDetailsvgContainer')
+            .attr('width', width - 100)
+            .attr('height', height - 100)
+
+        const svg = svgContainer.append('g')
+            .attr('id', 'bubblesvg')
+            .attr('class', 'bubblesvg')
+        // .attr('transform', 'translate(0,100)')
+
+        let zoomObj = d3.zoom()
+            .scaleExtent([1 / 50, 2])
+
+        svgContainer.call(
+            zoomObj.on('zoom', e => {
+                let { k, x, y } = e.transform;
+                d3.select('#bubblesvg').style('transform', `translate(${x}px, ${y}px) scale(${k})`);
+            })
+            // zoomObj.on('zoom', e => {
+            //     svg.attr('transform', d3.zoomTransform(d3.select('#svgContainer').node()))
+            // })
+
+        )
+
+        document.onkeydown = (e) => {
+            if (e.keyCode === 17) {
+                autoZoom(
+                    zoomObj,
+                    'bubbleDetailsvgContainer',
+                    'bubblesvg',
+                    {
+                        row: 50,
+                        col: 100
+                    },
+                    1000
+                )
+            }
+
+        }
+
+    }
+
+
+    const autoZoom = (zoomObj, svgContainerId, svgBodyId, marginParam, duration) => {
+
+        const svgContainer = document.querySelector(`#${svgContainerId}`);
+        const svgBody = d3.select(`#${svgBodyId}`);
+
+        const viewBox = svgBody.node().getBBox();//g
+        //svg
+        const containerWidth = svgContainer.clientWidth
+        const containerHeight = svgContainer.clientHeight
+        // margin setting
+        const rowMargin = marginParam.row
+        const colMargin = marginParam.col
+
+        const scale = Math.min((containerWidth - rowMargin) / viewBox.width, (containerHeight - colMargin) / viewBox.height)
+
+        const offsetX = (containerWidth - rowMargin) / 2 - (viewBox.x + viewBox.width / 2) * scale
+        const offsetY = (containerHeight - colMargin) / 2 - (viewBox.y + viewBox.height / 2) * scale
+
+        // d3.zoomIdentity:缩放参数，返回Transform{k:1,x:0,y:0}
+        const t = d3.zoomIdentity.translate(offsetX, offsetY).scale(scale)
+        d3.select(`#${svgContainerId}`).transition().duration(duration).call(zoomObj.transform, t)
+    }
 
     const getDrawData = (drawInfo) => {
         if (!Object.keys(drawInfo).length) {
@@ -128,6 +126,8 @@ export default function BubbleDetail() {
             return
         }
     }
+
+
     const drawLayout = () => {
         const svg = d3.select('#bubblesvg')
         svg.select('*').remove()
@@ -246,48 +246,39 @@ export default function BubbleDetail() {
     }
 
 
-
-    //剪枝trigger
+    //剪枝
     const handleCut = (cutMode) => {
-        let postData = {
-            areaInfo: { ...drawInfo },
-            dataName
-        }
 
         switch (cutMode) {
             case NORULES:
                 console.log(cutMode);
-                return;
+                break;
             case FUZZYSEG:
-                axios.post('http://localhost:8080/aggregate', postData)
-                    .then(resp => {
-                        if (resp.data.code === 200) {
-                            d3.select('#bubblesvg').select('*').remove()
-                            const { groupList, groupLinks } = resp.data.obj;
-                            const { cutNodes, cutLinks } = handleCutData(groupList, groupLinks);
-                            drawCutData(cutNodes, cutLinks);
-                        }
-                    })
-                    .catch(err => {
-                        return;
-                    })
-                return;
+                axios.post('http://localhost:8080/aggregate', { nodes, links }).then(resp => {
+                    if (resp.data.code === 200) {
+                        d3.select('#bubblesvg').select('*').remove()
+                        const { groupList, groupLinks } = resp.data.obj;
+                        const { cutNodes, cutLinks } = handleCutData(groupList, groupLinks);
+                        drawCutData(cutNodes, cutLinks);
+                    }
+
+                }).catch(err => {
+                    return;
+                })
+                console.log(cutMode);
+                break;
             case SEG:
                 console.log(cutMode);
-                return;
+                break;
             case DBSCAN:
                 console.log(cutMode);
-                return;
-            case ORIGIN:
-                //默认，初始状态，不剪枝
-                d3.select('#bubblesvg').select('*').remove()
-                getDrawData(drawInfo)
-                drawLayout()
-                return;
+                break;
             default:
-                return;
+                //默认，clean，不剪枝
+                break;
         }
     }
+
 
 
     const drawCutData = (nodes, links) => {
@@ -313,8 +304,6 @@ export default function BubbleDetail() {
             .attr('class', 'link')
             .attr('stroke', d => SETTING.fill.stroke)
             .attr('stroke-width', SETTING.size.linkStrokeWidth)
-
-
 
 
         const nodeG = svg.append('g')
@@ -349,7 +338,7 @@ export default function BubbleDetail() {
 
         const getSize = (d) => {
             if (d.hyperNode) {
-                return d.size * 3
+                return d.size *3
             } else {
                 return d.children[0].is_alarming ? SETTING.size.symbolSize * 3 : SETTING.size.symbolSize
             }
@@ -357,19 +346,18 @@ export default function BubbleDetail() {
 
         const getFill = (d) => {
             if (d.hyperNode) {
-                return '#bcb8b1';
+                return '#bcb8b180';
             } else {
                 return d.children[0].is_alarming ? SETTING.fill.alarmingNode : SETTING.fill.normalNode
             }
+
         }
 
         let nodeSymbol = nodeG
             .append('path')
             .attr('d', d3.symbol().type(getShape).size(getSize))
             .attr('fill', getFill)
-            .attr('stroke', d => d.hyperNode ? SETTING.hypernode.stroke : '')
-            .attr('stroke-width', d => d.hyperNode ? SETTING.hypernode.strokewidth : '')
-            .attr('stroke-dasharray', d => d.hyperNode ? SETTING.hypernode.dasharray : '')
+            // .attr('storke', d => d.hyperNode? )
             .call(
                 d3.drag()
                     .on('start', event => {
@@ -387,6 +375,8 @@ export default function BubbleDetail() {
                         simulation.alphaTarget(0.3).restart()
                     })
             );
+
+
 
 
         simulation = d3.forceSimulation(nodes)
@@ -408,16 +398,13 @@ export default function BubbleDetail() {
 
     }
 
-
     return (
         <div className='bubbleDetailContainer' id="bubbleDetailContainer">
             <BubbleDetailLegend />
-
-            <Button className='funcbtn' onClick={() => handleCut(FUZZYSEG)} shape='round'>FuzzySEG</Button>
-            <Button className='funcbtn' onClick={() => handleCut(SEG)} shape='round'>SEG</Button>
-            <Button className='funcbtn' onClick={() => handleCut(NORULES)} shape='round'>Alarming Cut</Button>
-            <Button className='funcbtn' onClick={() => handleCut(DBSCAN)} shape='round'>DBScan</Button>
-            <Button className='funcbtn' onClick={() => handleCut(ORIGIN)} shape='round'>Origin</Button>
+            <button onClick={() => handleCut(FUZZYSEG)}>fuzzySEG</button>
+            <button onClick={() => handleCut(SEG)}>SEG</button>
+            <button onClick={() => handleCut(NORULES)}>alarming cut</button>
+            <button onClick={() => handleCut(DBSCAN)}>DBScan</button>
 
         </div>
     )

@@ -19,6 +19,11 @@ export const SETTING = {
         'virtual': "#9467bd80",
         'default': "#bcb8b180"
     },
+    hypernode: {
+        stroke: 'brown',
+        strokewidth: '1',
+        dasharray: '0.5 0.5',
+    },
 
 
     alarming: {
@@ -44,3 +49,4 @@ export const FUZZYSEG = 'fuzzyseg';
 export const SEG = 'seg';
 export const DBSCAN = 'dbscan';
 export const NORULES = 'norules';
+export const ORIGIN = 'origin'

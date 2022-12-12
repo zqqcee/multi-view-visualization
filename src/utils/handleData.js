@@ -167,7 +167,6 @@ export const handleCutData = (groupList, groupLinks) => {
     let cutNodes = []
     let cutLinks = []
 
-
     cutNodes = groupList.map(group => {
         return { index: group.groupIndex, ...group }
     })
