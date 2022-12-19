@@ -13,4 +13,12 @@
     margin-left: 8px;
     width: 150px;
     box-shadow: 2px 2px 1px #f3f3f3;
+    float: left;
+}
+
+.funcbtncontainer {
+    width: 64%;
+    height: auto;
+    position: absolute;
+    background-color: white;
 }

@@ -20,9 +20,10 @@ export const SETTING = {
         'default': "#bcb8b180"
     },
     hypernode: {
-        stroke: 'brown',
+        fill: '#ededed',
+        stroke: '#b6dad3',
         strokewidth: '1',
-        dasharray: '0.5 0.5',
+        dasharray: '10 0.5',
     },
 
 
@@ -48,5 +49,5 @@ export const SETTING = {
 export const FUZZYSEG = 'fuzzyseg';
 export const SEG = 'seg';
 export const DBSCAN = 'dbscan';
-export const NORULES = 'norules';
+export const TARJAN = 'tarjan';
 export const ORIGIN = 'origin'

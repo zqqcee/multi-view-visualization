@@ -202,6 +202,9 @@ export default function AZNodeLink() {
 
         const svgContainer = document.querySelector(`#${svgContainerId}`);
         const svgBody = d3.select(`#${svgBodyId}`);
+        if (!svgContainer) {
+            return;
+        }
 
         const viewBox = svgBody.node().getBBox();//g
         //svg

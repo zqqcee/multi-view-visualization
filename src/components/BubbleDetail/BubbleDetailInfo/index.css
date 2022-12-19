@@ -1,0 +1,42 @@
+.bubbledetailinfocontainer {
+    position: absolute;
+    height: 181px;
+    width: 180px;
+    right: 0;
+    top: 322px;
+    border-radius: 1vh;
+    background-color: white;
+    box-shadow: 0 0 1vh #cdcfcf;
+    display: block;
+}
+
+.title {
+    width: 100%;
+    height: 5vh;
+    margin: 0 auto;
+    border-bottom: 3px solid #ccc;
+    line-height: 5vh;
+    text-align: center;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.hidden {
+    width: 100%;
+    height: 5vh;
+    margin: 0 auto;
+}
+
+.bubbledetailinfotablecontainer {
+    width: 100%;
+    height: auto;
+    /* background-color: pink; */
+    margin: auto;
+}
+
+.bubbledetailinfotext {
+    font-size: 13px;
+    line-height: 15px;
+    margin-left: 16px;
+    margin-top: 10px;
+}

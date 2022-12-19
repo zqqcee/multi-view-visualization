@@ -1,0 +1,17 @@
+.slidebarcontainer {
+    position: absolute;
+    width: 45%;
+    height: 33px;
+    right: 0px;
+    float: left;
+    top: 2px;
+    box-shadow: 3px 3px 8px #f3f3f3;
+    background-color: white;
+}
+
+.slidelabel {
+    font-size: 15px;
+    text-anchor: start;
+    text-align: center;
+    margin-top: 3px;
+}

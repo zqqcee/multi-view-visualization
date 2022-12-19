@@ -1,0 +1,22 @@
+.compressratiocontainer {
+    position: absolute;
+    height: 210px;
+    width: 180px;
+    right: 0;
+    top: 528px;
+    border-radius: 1vh;
+    background-color: white;
+    box-shadow: 0 0 1vh #cdcfcf;
+    display: block;
+}
+
+.title {
+    width: 100%;
+    height: 5vh;
+    margin: 0 auto;
+    border-bottom: 3px solid #ccc;
+    line-height: 5vh;
+    text-align: center;
+    font-size: 15px;
+    font-weight: bold;
+}

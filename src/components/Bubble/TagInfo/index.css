@@ -1,0 +1,9 @@
+.taginfocontainer {
+    position: absolute;
+    height: 43px;
+    width: 25%;
+    bottom: 0px;
+    border-bottom: 1px solid black;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+}

@@ -143,7 +143,6 @@ export default function Bubble() {
                 <AreaInfo />
             </div>
             <AreaNodeLink />
-
         </div>
 
     )

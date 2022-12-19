@@ -1,10 +1,10 @@
-.bubbleDetailLegendContainer {
+.taginfocontainer {
     position: absolute;
-    height: 250px;
+    height: 45px;
     width: 180px;
     right: 0;
-    top: 20;
+    top: 758px;
     border-radius: 1vh;
-    background-color: white;
     box-shadow: 0 0 1vh #cdcfcf;
+    display: block;
 }

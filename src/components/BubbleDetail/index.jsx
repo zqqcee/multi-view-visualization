@@ -1,13 +1,18 @@
 import React, { useEffect, useLayoutEffect } from 'react'
 import "./index.css"
 import * as d3 from "d3"
-import { useSelector } from 'react-redux'
-import { DBSCAN, FUZZYSEG, NORULES, ORIGIN, SEG, SETTING } from "./constant"
+import { useDispatch, useSelector } from 'react-redux'
+import { DBSCAN, FUZZYSEG, TARJAN, ORIGIN, SEG, SETTING } from "./constant"
 import { dataSets } from '../../utils/getData'
 import { handleData, handleCutData } from '../../utils/handleData'
 import BubbleDetailLegend from './BubbleDetailLegend'
 import { Button } from 'antd';
 import axios from 'axios'
+import BubbleDetailInfo from './BubbleDetailInfo'
+import SlideBar from './SlideBar'
+import { changeDetail, changeRatio } from "../../redux/bubbleSlice";
+import CompressRatio from './CompressRatio'
+import TagInfo from './TagInfo'
 
 let simulation
 
@@ -15,6 +20,7 @@ export default function BubbleDetail() {
 
     const dataName = useSelector(state => state.option.dataName)
     const data = handleData(dataSets[dataName])
+    const dispatch = useDispatch();
 
     const drawInfo = useSelector(state => state.bubble.drawInfo)
     let nodes = []
@@ -33,8 +39,8 @@ export default function BubbleDetail() {
             const svgContainer = d3.select('#bubbleDetailContainer').append('svg')
                 .attr('id', 'bubbleDetailsvgContainer')
                 .attr('class', 'bubbleDetailsvgContainer')
-                .attr('width', width - 100)
-                .attr('height', height - 100)
+                .attr('width', width - 50)
+                .attr('height', height - 50)
 
             const svg = svgContainer.append('g')
                 .attr('id', 'bubblesvg')
@@ -62,7 +68,7 @@ export default function BubbleDetail() {
                         'bubblesvg',
                         {
                             row: 30,
-                            col: 60
+                            col: 100
                         },
                         1000
                     )
@@ -127,11 +133,23 @@ export default function BubbleDetail() {
         } else {
             return
         }
+
+        let detail = {
+            nodescnt: nodes.length,
+            linkscnt: links.length,
+            alarmingNodesCnt: nodes.filter(node => node.is_alarming).length,
+            alarmingLinksCnt: links.filter(link => link.is_alarming).length,
+        }
+        dispatch(changeDetail({ detail }))
     }
+
+    /**
+     * 画未剪枝的数据
+     */
     const drawLayout = () => {
         const svg = d3.select('#bubblesvg')
         svg.select('*').remove()
-
+        dispatch(changeRatio({ ratio: 0 }))
         if (!nodes.length) {
             return;
         }
@@ -250,21 +268,34 @@ export default function BubbleDetail() {
     //剪枝trigger
     const handleCut = (cutMode) => {
         let postData = {
-            areaInfo: { ...drawInfo },
+            area: { ...drawInfo },
             dataName
         }
-
         switch (cutMode) {
-            case NORULES:
-                console.log(cutMode);
-                return;
-            case FUZZYSEG:
-                axios.post('http://localhost:8080/aggregate', postData)
+            case TARJAN:
+                axios.post('http://localhost:8080/tarjan', postData)
                     .then(resp => {
                         if (resp.data.code === 200) {
                             d3.select('#bubblesvg').select('*').remove()
-                            const { groupList, groupLinks } = resp.data.obj;
+                            const { groupList, groupLinks, compressionRatio } = resp.data.obj;
                             const { cutNodes, cutLinks } = handleCutData(groupList, groupLinks);
+                            dispatch(changeRatio({ ratio: compressionRatio }))
+                            drawCutData(cutNodes, cutLinks);
+                        }
+                    })
+                    .catch(err => {
+                        return;
+                    })
+                return;
+            case FUZZYSEG:
+                axios.post('http://localhost:8080/fuzzy_seg', postData)
+                    .then(resp => {
+                        if (resp.data.code === 200) {
+                            d3.select('#bubblesvg').select('*').remove()
+                            console.log(resp.data.obj);
+                            const { groupList, groupLinks, compressionRatio } = resp.data.obj;
+                            const { cutNodes, cutLinks } = handleCutData(groupList, groupLinks);
+                            dispatch(changeRatio({ ratio: compressionRatio }))
                             drawCutData(cutNodes, cutLinks);
                         }
                     })
@@ -273,7 +304,19 @@ export default function BubbleDetail() {
                     })
                 return;
             case SEG:
-                console.log(cutMode);
+                axios.post('http://localhost:8080/seg', postData)
+                    .then(resp => {
+                        if (resp.data.code === 200) {
+                            d3.select('#bubblesvg').select('*').remove()
+                            const { groupList, groupLinks, compressionRatio } = resp.data.obj;
+                            const { cutNodes, cutLinks } = handleCutData(groupList, groupLinks);
+                            dispatch(changeRatio({ ratio: compressionRatio }))
+                            drawCutData(cutNodes, cutLinks);
+                        }
+                    })
+                    .catch(err => {
+                        return;
+                    })
                 return;
             case DBSCAN:
                 console.log(cutMode);
@@ -290,6 +333,9 @@ export default function BubbleDetail() {
     }
 
 
+    /**
+     * 画剪枝数据
+     */
     const drawCutData = (nodes, links) => {
 
         const svg = d3.select('#bubblesvg')
@@ -327,8 +373,6 @@ export default function BubbleDetail() {
             .attr('id', d => `${d.index}_group`)
 
 
-
-
         const getShape = (d) => {
             if (d.hyperNode) {
                 return d3.symbolCircle
@@ -349,17 +393,17 @@ export default function BubbleDetail() {
 
         const getSize = (d) => {
             if (d.hyperNode) {
-                return d.size * 3
+                return d.size * 3 + SETTING.size.symbolSize
             } else {
-                return d.children[0].is_alarming ? SETTING.size.symbolSize * 3 : SETTING.size.symbolSize
+                return d.children[0].alarming ? SETTING.size.symbolSize * 3 : SETTING.size.symbolSize
             }
         }
 
         const getFill = (d) => {
             if (d.hyperNode) {
-                return '#bcb8b1';
+                return SETTING.hypernode.fill;
             } else {
-                return d.children[0].is_alarming ? SETTING.fill.alarmingNode : SETTING.fill.normalNode
+                return d.children[0].alarming ? SETTING.fill.alarmingNode : SETTING.fill.normalNode
             }
         }
 
@@ -367,6 +411,7 @@ export default function BubbleDetail() {
             .append('path')
             .attr('d', d3.symbol().type(getShape).size(getSize))
             .attr('fill', getFill)
+            .attr('size', getSize)
             .attr('stroke', d => d.hyperNode ? SETTING.hypernode.stroke : '')
             .attr('stroke-width', d => d.hyperNode ? SETTING.hypernode.strokewidth : '')
             .attr('stroke-dasharray', d => d.hyperNode ? SETTING.hypernode.dasharray : '')
@@ -408,16 +453,19 @@ export default function BubbleDetail() {
 
     }
 
-
     return (
         <div className='bubbleDetailContainer' id="bubbleDetailContainer">
             <BubbleDetailLegend />
-
-            <Button className='funcbtn' onClick={() => handleCut(FUZZYSEG)} shape='round'>FuzzySEG</Button>
-            <Button className='funcbtn' onClick={() => handleCut(SEG)} shape='round'>SEG</Button>
-            <Button className='funcbtn' onClick={() => handleCut(NORULES)} shape='round'>Alarming Cut</Button>
-            <Button className='funcbtn' onClick={() => handleCut(DBSCAN)} shape='round'>DBScan</Button>
-            <Button className='funcbtn' onClick={() => handleCut(ORIGIN)} shape='round'>Origin</Button>
+            <TagInfo />
+            <BubbleDetailInfo />
+            <CompressRatio />
+            <div className='funcbtncontainer' style={{ display: drawInfo.az ? '' : 'none' }}>
+                <Button className='funcbtn' onClick={() => handleCut(FUZZYSEG)} shape='round'>FuzzySEG</Button>
+                <Button className='funcbtn' onClick={() => handleCut(SEG)} shape='round'>SEG</Button>
+                <Button className='funcbtn' onClick={() => handleCut(TARJAN)} shape='round'>tarjan</Button>
+                <Button className='funcbtn' onClick={() => handleCut(ORIGIN)} shape='round'>Origin</Button>
+                <SlideBar />
+            </div>
 
         </div>
     )
