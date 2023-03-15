@@ -8,7 +8,8 @@ export default function SearchDetail() {
     const dataName = useSelector(state => state.option.dataName)
     const datasource = dataSets[dataName]
     const searchIps = useSelector(state => state.searchInfo.value)
-
+    const ipsNum = useSelector(state => state.searchInfo.num)
+    const alarmingNum = useSelector(state => state.searchInfo.alarmingNum)
 
 
     const nodes = datasource.nodes
@@ -24,7 +25,7 @@ export default function SearchDetail() {
         <div id="searchdetail" style={{ marginLeft: '10px', fontSize: '1.5vh' }}>
             {!firstNode ? null : (
                 <Fragment>
-                    <h3 style={{ textAlign: 'center' }}>First Node</h3>
+                    <h3 style={{ textAlign: 'center' }}>起始节点</h3>
                     <table>
                         <tbody >
                             {Object.entries(firstNode).map(([key, value], i) => {
@@ -47,7 +48,7 @@ export default function SearchDetail() {
             <br />
             {!secondNode ? null : (
                 <Fragment>
-                    <h3 style={{ textAlign: 'center' }}>Second Node</h3>
+                    <h3 style={{ textAlign: 'center' }}>目的节点</h3>
                     <table >
                         {Object.entries(secondNode).map(([key, value], i) => {
                             if (i <= 5) {
@@ -64,7 +65,13 @@ export default function SearchDetail() {
                 </Fragment>
             )
             }
-
+            <br />
+            <Fragment>
+                <h3 style={{ textAlign: 'center' }}>其他信息</h3>
+                最短路径长度：{ ipsNum }
+                <br />
+                途径告警设备数：{ alarmingNum }
+            </Fragment>
 
 
         </div >

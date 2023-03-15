@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { handleData, getAreaLink } from '../../../../utils/handleData'
 import { dataSets } from '../../../../utils/getData'
 import * as d3 from "d3"
 import "./index.css"
 import { SETTING } from "./constant"
+import { changeAreaInfo, changeDrawInfo } from "../../../../redux/bubbleSlice"
 
 let simulation
 let zoomObj
@@ -16,6 +17,7 @@ export default function PODNodeLink() {
     const drawData = getAreaLink(data)
     const az = drawInfo.az
     const pod = drawInfo.pod
+    const dispatch = useDispatch()
 
     const curAz = drawData.nodes.find(d => d.name === az)
 
@@ -26,7 +28,7 @@ export default function PODNodeLink() {
             container.select('*').remove()
         }
         initSvg()
-        drawLayout(curAz)
+        drawLayout(curAz, az)
     }, [dataName, az])
 
     useEffect(() => {
@@ -79,7 +81,7 @@ export default function PODNodeLink() {
     }
 
 
-    const drawLayout = (data) => {
+    const drawLayout = (data, az) => {
         if (!data) {
             return
         }
@@ -115,26 +117,31 @@ export default function PODNodeLink() {
             .join('g')
             .attr('class', 'nodeGroup')
             .attr('id', d => d.name)
-            .call(
-                d3.drag()
-                    .on('start', event => {
-                        //d3.event.active代表的是除去当前事件，当前正在发生的拖动事件的个数。
-                        if (!event.active) simulation.alphaTarget(0.3).restart();
-                        event.subject.fx = event.subject.x;
-                        event.subject.fy = event.subject.y;
-                    })
-                    .on('drag', event => {
-                        event.subject.fx = event.x;
-                        event.subject.fy = event.y;
-                        if (SETTING.dragMode.flag) {
-                            fixNodes(event.subject)
-                        }
-                    })
-                    .on('end', event => {
-                        // simulation.alphaTarget(simulation.alphaMin() * 0.1).restart()
-                        simulation.alphaTarget(0.3).restart()
-                    })
-            );
+            .on('click', (e, d) => {
+                let drawInfo
+                drawInfo = { az: az, pod: d.name }
+                dispatch(changeDrawInfo({ drawInfo }))
+            });
+            // .call(
+            //     d3.drag()
+            //         .on('start', event => {
+            //             //d3.event.active代表的是除去当前事件，当前正在发生的拖动事件的个数。
+            //             if (!event.active) simulation.alphaTarget(0.3).restart();
+            //             event.subject.fx = event.subject.x;
+            //             event.subject.fy = event.subject.y;
+            //         })
+            //         .on('drag', event => {
+            //             event.subject.fx = event.x;
+            //             event.subject.fy = event.y;
+            //             if (SETTING.dragMode.flag) {
+            //                 fixNodes(event.subject)
+            //             }
+            //         })
+            //         .on('end', event => {
+            //             // simulation.alphaTarget(simulation.alphaMin() * 0.1).restart()
+            //             simulation.alphaTarget(0.3).restart()
+            //         })
+            // );
 
 
         const fixNodes = (curNode) => {

@@ -179,3 +179,25 @@ export const handleCutData = (groupList, groupLinks) => {
 
     return { cutNodes, cutLinks }
 }
+
+/**
+ * 将数据转化成邻接表形式，便于BFS找到最短路径
+ */
+export const neighboringTable = (data) => {
+    const nodes = data.nodes
+    const links = data.links
+
+    const neighborTable = {}
+    nodes.forEach(node => {
+        neighborTable[node.mgmt_ip] = []
+        links.forEach(link => {
+            if(link.src_ip === node.mgmt_ip){
+                neighborTable[node.mgmt_ip].push(link.dst_ip)
+            } else if(link.dst_ip === node.mgmt_ip){
+                neighborTable[node.mgmt_ip].push(link.src_ip)
+            }
+        })
+    })
+
+    return neighborTable
+}

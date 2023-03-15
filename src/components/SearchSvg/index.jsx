@@ -1,24 +1,39 @@
 import React, { Fragment, useEffect } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { useState } from 'react'
 import { dataSets } from '../../utils/getData'
-import { handleData } from "../../utils/handleData"
+import { handleData, neighboringTable } from "../../utils/handleData"
 import { SETTING } from './constant'
 import * as d3 from "d3"
 import "./index.css"
+import { searchAlarmingNum, searchNum } from '../../redux/searchInfoSlice'
 
 
 let simulation
 export default function SearchSvg() {
 
-
     const dataName = useSelector(state => state.option.dataName)
     const datasource = dataSets[dataName]
     const data = handleData(datasource)
 
+    const neighborTable = neighboringTable(datasource)
+
     const searchIps = useSelector(state => state.searchInfo.value)
+    const oneHopFlag = useSelector(state => state.searchInfo.oneHopFlag)
     const twoHopFlag = useSelector(state => state.searchInfo.twoHopFlag)
     const highlightFlag = useSelector(state => state.searchInfo.highlightFlag)
-    console.log(highlightFlag);
+    const allOneHopFlag = useSelector(state => state.searchInfo.allOneHopFlag)
+    const allTwoHopFlag = useSelector(state => state.searchInfo.allTwoHopFlag)
+    const dispatch = useDispatch()
+    const [firstIp, secondIp] = searchIps.split('/')
+    console.log(firstIp)
+
+    const [chosenNode, setChosenNode] = useState(firstIp)
+    // setChosenNode(firstIp)
+
+    // console.log(neighborTable[chosenNode])
+
+    
 
     useEffect(() => {
         if (!searchIps) {
@@ -27,7 +42,21 @@ export default function SearchSvg() {
         }
         cleanSvg()
         initSvg()
-        const datum = getDataBySearchIps(searchIps)//根据用户输入的ip得到的需要绘制的数据
+        let datum = getDataByFindPath(searchIps)//根据用户输入的ip得到的需要绘制的数据
+        console.log(oneHopFlag)
+        // console.log(chosenNode)
+        if (oneHopFlag) {
+            datum = renewDataByOneHop(datum)
+        }
+        if (twoHopFlag) {
+            datum = renewDataByTwoHop(datum)
+        }
+        if (allOneHopFlag) {
+            datum = renewAllDataByOneHop(datum)
+        }
+        if (allTwoHopFlag) {
+            datum = renewAllDataByTwoHop(datum)
+        }
         if (datum.nodes.length) {
             drawLayout(datum)
         }
@@ -37,7 +66,7 @@ export default function SearchSvg() {
         //     cleanSvg();
         //     dispatch(search({ value: "" }))
         // })
-    }, [searchIps, twoHopFlag])
+    }, [searchIps, oneHopFlag, twoHopFlag, allOneHopFlag, allTwoHopFlag])
 
 
     useEffect(() => {
@@ -47,6 +76,18 @@ export default function SearchSvg() {
             cancelHighlightCircle()
         }
     }, [highlightFlag])
+
+    useEffect(() => {
+        // 想在这里修改被选中节点的样式， 但注释掉的那一行始终会报错
+        d3.select('#scontainer').selectAll('path').attr('class', '')
+        let id = chosenNode
+        if(!id) {
+            return 
+        }
+        id = 'group_' + id
+        console.log(id)
+        // d3.select('#scontainer').select(`#${id}`).select('path').attr('class', 'bling')
+    }, [chosenNode])
 
 
 
@@ -133,68 +174,171 @@ export default function SearchSvg() {
      * @param searchIps:用户输入的两个ip地址，用‘/’分隔
      * @return {nodes,links}: json数据，用于渲染
      */
-    const getDataBySearchIps = (searchIps) => {
+    const getDataByFindPath = (searchIps) => {
         const [firstIp, secondIp] = searchIps.split('/')
-        //找与firstIp与secondIp相连的两跳邻居
+        //找firstIp与secondIp之间的最短路径
+        //找firstIp与secondIp之间的最短路径
         const nodes = data.nodes
         const links = data.links
         let nodesSet = new Set()
         let linksSet = new Set()
-
-        //加入两个节点
-        if (nodes.find(node => node.mgmt_ip === firstIp)) {
-            nodesSet.add(nodes.find(node => node.mgmt_ip === firstIp))
-        }
-        if (nodes.find(node => node.mgmt_ip === secondIp)) {
-            nodesSet.add(nodes.find(node => node.mgmt_ip === secondIp))
-        }
-
-        //firstIp
-        links.forEach(link => {
-            if (link.src_ip === firstIp || link.dst_ip === firstIp) {
-                nodesSet.add(link.source)
-                nodesSet.add(link.target)
-                linksSet.add(link)
-                if (twoHopFlag) {
-                    let curSrcIp = link.source.mgmt_ip
-                    let curDstIp = link.target.mgmt_ip
-                    links.forEach(link => {
-                        if (link.src_ip === curSrcIp || link.dst_ip === curSrcIp || link.src_ip === curDstIp || link.dst_ip === curDstIp) {
-                            nodesSet.add(link.source)
-                            nodesSet.add(link.target)
-                            linksSet.add(link)
+        let queue = [] // BFS遍历队列
+        let dist = {} // 到各个点的最短路径长度
+        let path = {} // 最短路径
+        let usedNode = [] // 防止死循环，去除重复节点
+        let alarming = 0
+        queue.push(firstIp)
+        dist[firstIp] = 0
+        while(queue.length !== 0){
+            let ips = neighborTable[queue[0]]
+            usedNode.push(queue[0])
+            if(queue[0] === secondIp)
+                break
+            ips.forEach(ip => {
+                if(usedNode.indexOf(ip) === -1){
+                    queue.push(ip)
+                    if(dist[ip] !== undefined){
+                        if(dist[ip] > dist[queue[0]]){
+                            dist[ip] = dist[queue[0]] + 1
+                            path[ip] = queue[0]
                         }
-                    })
-                }
-
-            }
-        })
-
-        //secondIp，添加之前要判断是否存在第二个ip
-        if (secondIp) {
-            links.forEach(link => {
-                if (link.src_ip === secondIp || link.dst_ip === secondIp) {
-                    nodesSet.add(link.source)
-                    nodesSet.add(link.target)
-                    linksSet.add(link)
-                    if (twoHopFlag) {
-                        let curSrcIp = link.source.mgmt_ip
-                        let curDstIp = link.target.mgmt_ip
-                        links.forEach(link => {
-                            if (link.src_ip === curSrcIp || link.dst_ip === curSrcIp || link.src_ip === curDstIp || link.dst_ip === curDstIp) {
-                                nodesSet.add(link.source)
-                                nodesSet.add(link.target)
-                                linksSet.add(link)
-                            }
-                        })
                     }
-
+                    else {
+                        dist[ip] = dist[queue[0]] + 1
+                        path[ip] = queue[0]
+                    }
                 }
             })
+
+            queue.shift()
         }
+        let name = secondIp
+        if(usedNode.indexOf(name) !== -1){
+            while(name){
+                let node = nodes.find(node => node.mgmt_ip === name)
+                let forward = name
+                nodesSet.add(node)
+                if(node.is_alarming === true)
+                    alarming = alarming + 1
+                name = path[name]
+                if(name){
+                    linksSet.add(links.find(link => link.dst_ip === forward && link.src_ip === name || link.src_ip === forward && link.dst_ip === name))
+                }
+            }
+        }
+        else {
+            nodesSet.add(nodes.find(node => node.mgmt_ip === firstIp))
+            nodesSet.add(nodes.find(node => node.mgmt_ip === secondIp))
+        }
+        let ipsNum = dist[secondIp]
+        if(ipsNum === undefined)
+            ipsNum = 0
+        dispatch(searchNum(ipsNum))
+        dispatch(searchAlarmingNum(alarming))
+        // return dist[secondIp] //最短路径长度
 
         return { nodes: Array.from(nodesSet), links: Array.from(linksSet) }
 
+    }
+
+    const renewDataByOneHop = (datum) => {
+        const nodes = data.nodes
+        const links = data.links
+        let ips = neighborTable[chosenNode]
+        ips.forEach(ip => {
+            let node = nodes.find(node => node.mgmt_ip === ip)
+            if(datum.nodes.indexOf(node) === -1){
+                datum.nodes.push(node)
+                datum.links.push(links.find(link => link.dst_ip === ip && link.src_ip === chosenNode || link.src_ip === ip && link.dst_ip === chosenNode))
+            }
+            
+        })
+
+        return datum
+    }
+
+    const renewDataByTwoHop = (datum) => {
+        const nodes = data.nodes
+        const links = data.links
+        let nodesSet = new Set()
+        let linksSet = new Set()
+        let ips = neighborTable[chosenNode]
+        ips.forEach(ip => {
+            let node = nodes.find(node => node.mgmt_ip === ip)
+            nodesSet.add(node)
+            linksSet.add(links.find(link => link.dst_ip === ip && link.src_ip === chosenNode || link.src_ip === ip && link.dst_ip === chosenNode))
+                
+
+            let secondIps = neighborTable[ip]
+            secondIps.forEach(secondIp => {
+                let node = nodes.find(node => node.mgmt_ip === secondIp)
+                nodesSet.add(node)
+                linksSet.add(links.find(link => link.dst_ip === secondIp && link.src_ip === ip || link.src_ip === secondIp && link.dst_ip === ip))
+                
+            })
+        })
+        datum.nodes.forEach(node => {
+            nodesSet.add(node)
+        })
+        datum.links.forEach(link => {
+            linksSet.add(link)
+        })
+
+        return { nodes: Array.from(nodesSet), links: Array.from(linksSet) }
+    }
+
+    const renewAllDataByOneHop = (datum) => {
+        const nodes = data.nodes
+        const links = data.links
+        let nodesSet = new Set()
+        let linksSet = new Set()
+        datum.nodes.forEach(node => {
+            nodesSet.add(node)
+            let chosenNode = node.mgmt_ip
+            let ips = neighborTable[chosenNode]
+            ips.forEach(ip => {
+                let node = nodes.find(node => node.mgmt_ip === ip)
+                nodesSet.add(node)
+                linksSet.add(links.find(link => link.dst_ip === ip && link.src_ip === chosenNode || link.src_ip === ip && link.dst_ip === chosenNode))
+                
+            })
+        })
+        datum.links.forEach(link => {
+            linksSet.add(link)
+        })
+
+        return { nodes: Array.from(nodesSet), links: Array.from(linksSet) }
+    }
+
+    const renewAllDataByTwoHop = (datum) => {
+        const nodes = data.nodes
+        const links = data.links
+        let nodesSet = new Set()
+        let linksSet = new Set()
+        datum.nodes.forEach(node => {
+            nodesSet.add(node)
+            let chosenNode = node.mgmt_ip
+            let ips = neighborTable[chosenNode]
+            ips.forEach(ip => {
+                let node = nodes.find(node => node.mgmt_ip === ip)
+                nodesSet.add(node)
+                linksSet.add(links.find(link => link.dst_ip === ip && link.src_ip === chosenNode || link.src_ip === ip && link.dst_ip === chosenNode))
+                
+
+                let secondIps = neighborTable[ip]
+                secondIps.forEach(secondIp => {
+                    let node = nodes.find(node => node.mgmt_ip === secondIp)
+                    nodesSet.add(node)
+                    linksSet.add(links.find(link => link.dst_ip === secondIp && link.src_ip === ip || link.src_ip === secondIp && link.dst_ip === ip))
+                    
+                })
+            })
+        })
+        datum.links.forEach(link => {
+            linksSet.add(link)
+        })
+
+        return { nodes: Array.from(nodesSet), links: Array.from(linksSet) }
     }
 
     const drawLayout = (data) => {
@@ -229,7 +373,12 @@ export default function SearchSvg() {
             .data(nodes)
             .join('g')
             .attr('class', 'nodeGroup')
-            .attr('id', d => `${d.mgmt_ip}_group`)
+            .attr('id', d => `group_${d.mgmt_ip}`)
+            .on('click', (e, d) => {
+                // let chosenNode1 = d.mgmt_ip
+                // dispatch(changeChosenNode({chosenNode : chosenNode1}))
+                setChosenNode(d.mgmt_ip)
+            })
 
 
         const fixNodes = (curNode) => {
@@ -241,16 +390,25 @@ export default function SearchSvg() {
             });
         }
 
-
-
-
-
-        let nodeCircle = nodeG
-            .append('circle')
+        let nodeSymbol = nodeG
+            .append('path')
             .attr('class', 'nodeCircle')
+            // .attr('class', 'bling')
+            .attr('d', d3.symbol().type((d) => {
+                switch (d.role.toLowerCase()) {
+                    case "core":
+                        return d3.symbolStar;
+                    case "spine":
+                        return d3.symbolTriangle;
+                    case "leaf" || "tor":
+                        return d3.symbolCircle;
+                    default:
+                        return d3.symbolSquare
+                }
+            }).size(SETTING.size.nodeRadius * 20))
             // .attr('class','bling')
             .attr('id', d => `ip_${d.mgmt_ip.replaceAll('.', "")}`)
-            .attr('r', SETTING.size.nodeRadius)
+            // .attr('r', SETTING.size.nodeRadius)
             .attr('fill', d => SETTING.fill[d.role.toLowerCase()])
             .call(
                 d3.drag()
@@ -276,10 +434,10 @@ export default function SearchSvg() {
 
 
 
-        simulation = d3.forceSimulation(nodes)
-            .force("charge", d3.forceManyBody().strength(-80))
+            simulation = d3.forceSimulation(nodes)
+            .force("charge", d3.forceManyBody().strength(-100))
             .force("center", d3.forceCenter(width / 2, height / 2))
-            .force("collide", d3.forceCollide().radius(SETTING.size.nodeRadius).strength(0.8))
+            .force("collide", d3.forceCollide().radius(d => d.is_alarming ? SETTING.size.nodeRadius * 3 : SETTING.size.nodeRadius).strength(0.8))
             //设定forceX与forceY使得它们更加聚拢在中间位置
             //FIXME:调整了strength
             .force("x", d3.forceX(width / 2).strength(0.1))
@@ -292,10 +450,8 @@ export default function SearchSvg() {
                     .attr("y1", function (d) { return parseInt(d.source.y); })
                     .attr("x2", function (d) { return parseInt(d.target.x); })
                     .attr("y2", function (d) { return parseInt(d.target.y); });
-                nodeCircle.attr("cx", function (d) { return parseInt(d.x); })
-                    .attr("cy", function (d) { return parseInt(d.y); });
+                nodeSymbol.attr('transform', function (d) { return 'translate(' + d.x + ',' + d.y + ')' })
             })
-
     }
 
     const highlightCircle = (searchIps) => {
@@ -309,7 +465,7 @@ export default function SearchSvg() {
     }
 
     const cancelHighlightCircle = () => {
-        d3.select('#scontainer').selectAll('circle').attr('class', '').attr('r', SETTING.size.nodeRadius)
+        d3.select('#scontainer').selectAll('path').attr('class', '').attr('r', SETTING.size.nodeRadius)
     }
 
     return (

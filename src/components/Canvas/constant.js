@@ -3,7 +3,8 @@ export const SETTING = {
         nodeRadius: 5,
         highlightNodeRadius: 6,
         linkStrokeWidth: .3,
-        highlightLinkStrokeWidth: 2
+        highlightLinkStrokeWidth: 2,
+        symbolSize : 100
     },
     fill: {
         // 'core': "#00296b",

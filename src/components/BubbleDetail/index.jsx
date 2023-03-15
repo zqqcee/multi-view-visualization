@@ -6,13 +6,11 @@ import { DBSCAN, FUZZYSEG, TARJAN, ORIGIN, SEG, SETTING } from "./constant"
 import { dataSets } from '../../utils/getData'
 import { handleData, handleCutData } from '../../utils/handleData'
 import BubbleDetailLegend from './BubbleDetailLegend'
-import { Button } from 'antd';
 import axios from 'axios'
 import BubbleDetailInfo from './BubbleDetailInfo'
-import SlideBar from './SlideBar'
 import { changeDetail, changeRatio } from "../../redux/bubbleSlice";
-import CompressRatio from './CompressRatio'
 import TagInfo from './TagInfo'
+import FunctionSelection from './FunctionSelection'
 
 let simulation
 
@@ -156,7 +154,6 @@ export default function BubbleDetail() {
         const height = document.querySelector("#bubbleDetailContainer").clientHeight
         const width = document.querySelector("#bubbleDetailContainer").clientWidth
 
-
         //FIXME: 先添加link，再添加circle，可以保证连边在circle的下层
         const linkLine = svg.append('g')
             .attr('class', 'links')
@@ -266,11 +263,14 @@ export default function BubbleDetail() {
 
 
     //剪枝trigger
-    const handleCut = (cutMode) => {
+    const handleCut = (cutMode, similarityThreshold, cutRatio) => {
         let postData = {
             area: { ...drawInfo },
-            dataName
+            dataName,
+            similarityThreshold,
+            cutRatio
         }
+        console.log(postData);
         switch (cutMode) {
             case TARJAN:
                 axios.post('http://localhost:8080/tarjan', postData)
@@ -318,9 +318,6 @@ export default function BubbleDetail() {
                         return;
                     })
                 return;
-            case DBSCAN:
-                console.log(cutMode);
-                return;
             case ORIGIN:
                 //默认，初始状态，不剪枝
                 d3.select('#bubblesvg').select('*').remove()
@@ -330,6 +327,8 @@ export default function BubbleDetail() {
             default:
                 return;
         }
+
+
     }
 
 
@@ -458,14 +457,7 @@ export default function BubbleDetail() {
             <BubbleDetailLegend />
             <TagInfo />
             <BubbleDetailInfo />
-            <CompressRatio />
-            <div className='funcbtncontainer' style={{ display: drawInfo.az ? '' : 'none' }}>
-                <Button className='funcbtn' onClick={() => handleCut(FUZZYSEG)} shape='round'>FuzzySEG</Button>
-                <Button className='funcbtn' onClick={() => handleCut(SEG)} shape='round'>SEG</Button>
-                <Button className='funcbtn' onClick={() => handleCut(TARJAN)} shape='round'>tarjan</Button>
-                <Button className='funcbtn' onClick={() => handleCut(ORIGIN)} shape='round'>Origin</Button>
-                <SlideBar />
-            </div>
+            <FunctionSelection handleClick={handleCut} />
 
         </div>
     )

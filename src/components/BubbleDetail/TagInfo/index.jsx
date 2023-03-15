@@ -3,11 +3,8 @@ import "./index.css"
 import { Tag } from 'antd'
 import {
     CheckCircleOutlined,
-    ClockCircleOutlined,
     CloseCircleOutlined,
     ExclamationCircleOutlined,
-    MinusCircleOutlined,
-    SyncOutlined,
 } from '@ant-design/icons';
 import { useSelector } from 'react-redux';
 

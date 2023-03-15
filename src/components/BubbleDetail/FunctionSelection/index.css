@@ -1,0 +1,44 @@
+.functionselectioncontainer {
+    position: absolute;
+    height: 272px;
+    width: 180px;
+    right: 0;
+    top: 528px;
+    border-radius: 1vh;
+    background-color: rgb(255, 255, 255);
+    box-shadow: 0 0 1vh #cdcfcf;
+    display: block;
+}
+
+.functionselectioncontainertitle {
+    width: 100%;
+    height: 4vh;
+    margin: 0 auto;
+    border-bottom: 3px solid #ccc;
+    line-height: 4vh;
+    text-align: center;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.functiontitle {
+    margin-top: 1px;
+    font-size: 13px;
+    text-align: center;
+    padding-top: 10px;
+    line-height: 5px;
+}
+
+.funcselector {
+    margin-left: 20px;
+    text-align: center;
+}
+
+.gobtn {
+    margin-left: 55px;
+    margin-top: 10px;
+}
+
+.funcoptioncontainer {
+    color: grey;
+}
