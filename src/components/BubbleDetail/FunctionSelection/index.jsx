@@ -59,12 +59,12 @@ export default function FunctionSelection(props) {
                 <p className='functiontitle'>聚合强度:</p>
                 <SlideBar type="compress" disabled={cutMode === ORIGIN || cutMode === TARJAN || cutMode === SEG} />
             </div>
-            <div className='funcoptioncontainer'>
+            {/* <div className='funcoptioncontainer'>
                 <p className='functiontitle'>剪枝强度:</p>
                 <SlideBar type="cut" disabled={cutMode === ORIGIN || cutMode === TARJAN || cutMode === SEG} />
-            </div>
+            </div> */}
             <div className='gobtn'>
-                <Button size='small' onClick={handleClick}>智能剪枝</Button>
+                <Button size='small' onClick={handleClick}>节点聚合</Button>
             </div>
         </div>
     )

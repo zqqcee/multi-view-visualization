@@ -80,13 +80,13 @@ export default function SearchSvg() {
     useEffect(() => {
         // 想在这里修改被选中节点的样式， 但注释掉的那一行始终会报错
         d3.select('#scontainer').selectAll('path').attr('class', '')
-        let id = chosenNode
+        let id = chosenNode.replaceAll(".","")
         if(!id) {
             return 
         }
         id = 'group_' + id
         console.log(id)
-        // d3.select('#scontainer').select(`#${id}`).select('path').attr('class', 'bling')
+        d3.select('#scontainer').select(`#${id}`).select('path').attr('class', 'bling')
     }, [chosenNode])
 
 
@@ -373,7 +373,7 @@ export default function SearchSvg() {
             .data(nodes)
             .join('g')
             .attr('class', 'nodeGroup')
-            .attr('id', d => `group_${d.mgmt_ip}`)
+            .attr('id', d => `group_${d.mgmt_ip.replaceAll(".","")}`)
             .on('click', (e, d) => {
                 // let chosenNode1 = d.mgmt_ip
                 // dispatch(changeChosenNode({chosenNode : chosenNode1}))
