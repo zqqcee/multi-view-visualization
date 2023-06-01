@@ -13,7 +13,7 @@ import "./index.css"
 export default function Header() {
     return (
         <div className="header">
-            <div className="systemTitle">网络大脑数据浏览平台</div>
+            <div className="systemTitle">云服务拓扑图析</div>
             <div className="routerLinkList">
               <Navigator />
             </div>
