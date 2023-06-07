@@ -70,7 +70,7 @@ There are four pages in this project
 
   For the convenience of observation, this page provides the methods of **"find one-hop neighbor"**, **"find two-hop neighbor"** and **"highlight node"**
 
-  ![detailpage](/Users/zqqcee/Desktop/华为云/二期资料/华为云实验/data-viz/doc/detailpage.gif)
+  ![detailpage](doc/detailpage.gif)
 
 - **Multi-View Page**
 
@@ -80,7 +80,7 @@ There are four pages in this project
   - The main canvas can **display the connection status of devices** in a specific area. 
   - The operation sidebar can perform some **special operations**. see Advanced Usage.
 
-  ![multiview](/Users/zqqcee/Desktop/华为云/二期资料/华为云实验/data-viz/doc/multiview.gif)
+  ![multiview](doc/multiview.gif)
 
 ## Advanced Usage
 
