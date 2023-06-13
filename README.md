@@ -4,8 +4,7 @@
   <img width="25%" src="doc/logo.png" />
   <img width="25%" src="doc/react.svg" />
 </p>
-
-
+:warning:  **Note: The data is removed due to privacy. See `Add new datasets` for data configuration.**
 
 ## background
 
